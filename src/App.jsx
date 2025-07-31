@@ -42,7 +42,7 @@ function App() {
 				<meta property="og:type" content="website" />
 			</Helmet>
 			
-			<h1>🌤️ 날씨 웹앱</h1>
+			<h1>🌤️ 날씨 웹앱!</h1>
 			<input
 				value={city}
 				onChange={(e) => setCity(e.target.value)}
