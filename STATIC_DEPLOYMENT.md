@@ -3,7 +3,7 @@
 ## 📋 현재 SEO 설정 상태
 
 ### ✅ 완료된 설정
-- **React Helmet**: 각 페이지별 동적 메타 태그
+- **React Helmet (@dr.pogodin/react-helmet)**: 각 페이지별 동적 메타 태그 (React 19+ 지원)
 - **robots.txt**: 검색 엔진 크롤러 규칙
 - **sitemap.xml**: 사이트 구조 정보
 - **SPA 라우팅 처리**: 404.html을 통한 리다이렉트
@@ -32,15 +32,18 @@ npm run preview
 
 ## 🌐 Cloudflare Pages 배포
 
-### 1. 빌드 설정
+### 1. 빌드 설정 (Build system version 3)
 - **Framework preset**: Vite
-- **Build command**: `npm run build` (자동으로 `--legacy-peer-deps` 포함)
+- **Build command**: `npm run build`
 - **Build output directory**: `dist`
 - **Root directory**: `/` (기본값)
+- **Node.js version**: 18+ (자동 감지)
+- **npm version**: 9+ (자동 감지)
 
 ### 2. 빌드 환경 설정
 - ✅ `.npmrc` 파일이 프로젝트 루트에 포함되어 있는지 확인
-- ✅ `package.json`의 build 스크립트가 올바르게 설정되어 있는지 확인
+- ✅ `package.json`의 engines 필드로 Node.js/npm 버전 명시
+- ✅ `package.json`의 build 스크립트가 최적화되어 있는지 확인
 
 ### 3. 환경 변수 (필요시)
 ```
@@ -93,9 +96,11 @@ curl -I https://rw-7hc.pages.dev/gyeonggi
 ### 1. 빌드 오류 (npm ERESOLVE)
 **문제**: `react-helmet-async`와 React 19 간의 의존성 충돌
 **해결책**:
+- ✅ `@dr.pogodin/react-helmet`으로 교체 (React 19+ 지원)
 - ✅ `.npmrc` 파일에 `legacy-peer-deps=true` 설정 추가
-- ✅ `package.json`의 build 스크립트에 `--legacy-peer-deps` 플래그 추가
-- ✅ Cloudflare Pages에서 빌드 명령어: `npm run build`
+- ✅ `package.json`의 engines 필드로 Node.js/npm 버전 명시
+- ✅ Cloudflare Pages Build system version 3에서 자동으로 의존성 해결
+- ✅ 빌드 명령어: `npm run build`
 
 ### 2. 404 에러
 - `public/404.html` 파일이 제대로 배포되었는지 확인
