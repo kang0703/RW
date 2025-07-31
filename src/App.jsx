@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const API_KEY = "3a821b91dd99ce14a86001543d3bfe42";
 
@@ -12,6 +13,14 @@ function App() {
 	const navigate = useNavigate();
 
 	useEffect(() => {
+		// 404.html에서 리다이렉트된 URL 처리
+		const redirectPath = sessionStorage.getItem('redirect');
+		if (redirectPath) {
+			sessionStorage.removeItem('redirect');
+			navigate(redirectPath);
+			return;
+		}
+
 		axios
 		.get(
 			`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
@@ -20,10 +29,19 @@ function App() {
 			setWeather(res.data);
 		})
 		.catch((err) => console.error(err));
-	}, [city]);
+	}, [city, navigate]);
 
 	return (
 		<div style={{ padding: "2rem" }}>
+			<Helmet>
+				<title>🌤️ 날씨 웹앱 - 전국 날씨 정보</title>
+				<meta name="description" content="전국 주요 도시의 실시간 날씨 정보를 확인하세요. 서울, 경기도, 강원도 등 10개 지역의 날씨를 제공합니다." />
+				<meta name="keywords" content="날씨, 기상, 온도, 날씨앱, 한국날씨" />
+				<meta property="og:title" content="🌤️ 날씨 웹앱 - 전국 날씨 정보" />
+				<meta property="og:description" content="전국 주요 도시의 실시간 날씨 정보를 확인하세요." />
+				<meta property="og:type" content="website" />
+			</Helmet>
+			
 			<h1>🌤️ 날씨 웹앱</h1>
 			<input
 				value={city}

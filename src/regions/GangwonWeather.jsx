@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 
 const API_KEY = "3a821b91dd99ce14a86001543d3bfe42";
 
-const cities = ["Chuncheon", "Gangneung", "Wonju", "Donghae", "Taebaek", "Sokcho", "Samcheok", "Hongcheon", "Cheorwon", "Hwacheon"];
+const cities = ["Chuncheon", "Wonju", "Gangneung", "Donghae", "Sokcho", "Samcheok", "Hongcheon", "Cheorwon", "Hwacheon", "Yanggu"];
 
 function GangwonWeather() {
   const [weatherData, setWeatherData] = useState({});
@@ -40,6 +41,14 @@ function GangwonWeather() {
   if (loading) {
     return (
       <div style={{ padding: "2rem", textAlign: "center" }}>
+        <Helmet>
+          <title>강원도 날씨 - 실시간 기온 및 날씨 정보</title>
+          <meta name="description" content="강원도 주요 도시들의 실시간 날씨 정보를 확인하세요. 춘천, 원주, 강릉, 동해, 속초, 삼척, 홍천, 철원, 화천, 양구 등 10개 도시의 날씨를 제공합니다." />
+          <meta name="keywords" content="강원도날씨, 강원도기온, 강원도기상, 춘천날씨, 원주날씨, 강릉날씨, 동해날씨, 속초날씨, 삼척날씨, 홍천날씨, 철원날씨, 화천날씨, 양구날씨" />
+          <meta property="og:title" content="강원도 날씨 - 실시간 기온 및 날씨 정보" />
+          <meta property="og:description" content="강원도 주요 도시들의 실시간 날씨 정보를 확인하세요." />
+          <meta property="og:type" content="website" />
+        </Helmet>
         <h1>강원도 날씨</h1>
         <p>날씨 정보를 불러오는 중...</p>
         <button onClick={() => navigate("/")}>뒤로가기</button>
@@ -49,7 +58,16 @@ function GangwonWeather() {
 
   return (
     <div style={{ padding: "2rem" }}>
-      <h1>🌍 강원도 날씨</h1>
+      <Helmet>
+        <title>강원도 날씨 - 실시간 기온 및 날씨 정보</title>
+        <meta name="description" content="강원도 주요 도시들의 실시간 날씨 정보를 확인하세요. 춘천, 원주, 강릉, 동해, 속초, 삼척, 홍천, 철원, 화천, 양구 등 10개 도시의 날씨를 제공합니다." />
+        <meta name="keywords" content="강원도날씨, 강원도기온, 강원도기상, 춘천날씨, 원주날씨, 강릉날씨, 동해날씨, 속초날씨, 삼척날씨, 홍천날씨, 철원날씨, 화천날씨, 양구날씨" />
+        <meta property="og:title" content="강원도 날씨 - 실시간 기온 및 날씨 정보" />
+        <meta property="og:description" content="강원도 주요 도시들의 실시간 날씨 정보를 확인하세요." />
+        <meta property="og:type" content="website" />
+      </Helmet>
+      
+      <h1>🏔️ 강원도 날씨</h1>
       
       <div style={{ 
         display: "grid", 
@@ -66,13 +84,15 @@ function GangwonWeather() {
               border: "1px solid #ddd",
               borderRadius: "8px",
               padding: "1rem",
-              backgroundColor: "#f9f9f9"
+              backgroundColor: "#ffffff",
+              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+              color: "#333333"
             }}>
-              <h3>{weather.name}</h3>
-              <p>🌡️ 온도: {weather.main.temp}°C</p>
-              <p>☁️ 날씨: {weather.weather[0].description}</p>
-              <p>💧 습도: {weather.main.humidity}%</p>
-              <p>💨 풍속: {weather.wind.speed} m/s</p>
+              <h3 style={{ color: "#333333", margin: "0 0 0.5rem 0" }}>{weather.name}</h3>
+              <p style={{ color: "#333333", margin: "0.25rem 0" }}>🌡️ 온도: {weather.main.temp}°C</p>
+              <p style={{ color: "#333333", margin: "0.25rem 0" }}>☁️ 날씨: {weather.weather[0].description}</p>
+              <p style={{ color: "#333333", margin: "0.25rem 0" }}>💧 습도: {weather.main.humidity}%</p>
+              <p style={{ color: "#333333", margin: "0.25rem 0" }}>💨 풍속: {weather.wind.speed} m/s</p>
             </div>
           );
         })}
