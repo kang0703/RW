@@ -3,7 +3,6 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { HelmetProvider } from "@dr.pogodin/react-helmet";
 
-import './index.css';
 import App from './App.jsx';
 import SeoulWeather from "./regions/SeoulWeather.jsx";
 import GyeonggiWeather from "./regions/GyeonggiWeather.jsx";

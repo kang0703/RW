@@ -1,0 +1,121 @@
+@import 'variables';
+
+// 기본 HTML 요소 스타일
+:root {
+  font-family: $font-family;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// 루트 요소 스타일
+#root {
+//   max-width: 1280px;
+//   margin: 0 auto;
+//   padding: 2rem;
+//   text-align: center;
+}
+
+// 링크 스타일
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+  
+  &:hover {
+    color: #535bf2;
+  }
+}
+
+// 기본 버튼 스타일 (컴포넌트별 스타일로 덮어쓸 수 있음)
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+  
+  &:hover {
+    border-color: #646cff;
+  }
+  
+  &:focus,
+  &:focus-visible {
+    outline: 4px auto -webkit-focus-ring-color;
+  }
+}
+
+// 제목 스타일
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+// 로고 스타일 (필요한 경우 사용)
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+  
+  &:hover {
+    filter: drop-shadow(0 0 2em #646cffaa);
+  }
+  
+  &.react:hover {
+    filter: drop-shadow(0 0 2em #61dafbaa);
+  }
+}
+
+// 로고 회전 애니메이션
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// 애니메이션 선호도 설정
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+// 기본 카드 스타일
+.card {
+  padding: 2em;
+}
+
+// 문서 링크 스타일
+.read-the-docs {
+  color: #888;
+}
+
+// 라이트 모드 스타일
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  
+  a:hover {
+    color: #747bff;
+  }
+  
+  button {
+    background-color: #f9f9f9;
+  }
+} 

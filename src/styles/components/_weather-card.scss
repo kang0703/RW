@@ -1,0 +1,65 @@
+@import '../variables';
+@import '../mixins';
+
+.weather-card {
+  @include card-style;
+  padding: $spacing-lg;
+  margin-bottom: $spacing-xl;
+  
+  &__content {
+    @include flex-center;
+    gap: $spacing-lg;
+    flex-wrap: wrap;
+  }
+  
+  &__icon-section {
+    text-align: center;
+  }
+  
+  &__city-name {
+    margin: $spacing-sm 0 $spacing-xs 0;
+    color: $text-primary;
+    font-size: $font-size-large;
+  }
+  
+  &__description {
+    margin: $spacing-xs 0;
+    color: $text-secondary;
+    font-size: $font-size-small;
+  }
+  
+  &__info-section {
+    text-align: left;
+    min-width: 200px;
+  }
+  
+  &__info-grid {
+    @include responsive-grid(150px);
+    margin-top: $spacing-sm;
+  }
+  
+  &__info-item {
+    @include info-card('temperature');
+    
+    &--humidity {
+      @include info-card('humidity');
+    }
+    
+    &--pressure {
+      @include info-card('pressure');
+    }
+  }
+  
+  @include mobile {
+    padding: $spacing-sm;
+    
+    &__content {
+      flex-direction: column;
+      gap: $spacing-sm;
+    }
+    
+    &__info-section {
+      text-align: center;
+    }
+  }
+} 

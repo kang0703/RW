@@ -1,0 +1,146 @@
+@import '../variables';
+@import '../mixins';
+
+.city-cards {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: $spacing-md;
+	margin-bottom: $spacing-lg;
+
+	// 큰 화면 (1200px 이상)
+	@media (min-width: 1200px) {
+		gap: $spacing-lg;
+	}
+
+	// 중간 화면 (992px - 1199px)
+	@media (min-width: 992px) and (max-width: 1199px) {
+		gap: $spacing-md;
+	}
+
+	// 작은 화면 (768px - 991px)
+	@media (min-width: 768px) and (max-width: 991px) {
+		gap: $spacing-sm;
+	}
+
+	// 태블릿 (576px - 767px)
+	@media (min-width: 576px) and (max-width: 767px) {
+		gap: $spacing-sm;
+	}
+
+	// 모바일 (575px 이하)
+	@media (max-width: 575px) {
+		gap: $spacing-sm;
+	}
+}
+
+.city-card {
+	@include card-style;
+	padding: $spacing-md;
+	text-align: left;
+	transition: $transition;
+	flex: 0 0 auto;
+	min-width: 250px;
+	max-width: 350px;
+
+	// 큰 화면 (1200px 이상) - 3개씩
+	@media (min-width: 1200px) {
+		width: calc(33.333% - #{$spacing-lg * 2 / 3});
+		padding: $spacing-lg;
+		
+		&__title {
+			font-size: 1.8rem;
+		}
+		
+		&__info {
+			font-size: 1.2rem;
+		}
+	}
+
+	// 중간 화면 (992px - 1199px) - 3개씩
+	@media (min-width: 992px) and (max-width: 1199px) {
+		width: calc(33.333% - #{$spacing-md * 2 / 3});
+		padding: $spacing-md;
+		
+		&__title {
+			font-size: 1.5rem;
+		}
+		
+		&__info {
+			font-size: 1.1rem;
+		}
+	}
+
+	// 작은 화면 (768px - 991px) - 2개씩
+	@media (min-width: 768px) and (max-width: 991px) {
+		width: calc(50% - #{$spacing-sm});
+		padding: $spacing-sm;
+		
+		&__title {
+			font-size: 1.3rem;
+		}
+		
+		&__info {
+			font-size: 1rem;
+		}
+	}
+
+	// 태블릿 (576px - 767px) - 2개씩
+	@media (min-width: 576px) and (max-width: 767px) {
+		width: calc(50% - #{$spacing-sm});
+		padding: $spacing-sm;
+		
+		&__title {
+			font-size: 1.2rem;
+		}
+		
+		&__info {
+			font-size: 0.95rem;
+		}
+	}
+
+	// 모바일 (575px 이하) - 1개씩
+	@media (max-width: 575px) {
+		width: 100%;
+		padding: $spacing-sm;
+
+		&__title {
+			font-size: 1.1rem;
+		}
+
+		&__info {
+			font-size: 0.9rem;
+		}
+	}
+
+	&:hover {
+		transform: translateY(-2px);
+		box-shadow: $shadow-medium;
+	}
+
+	&__title {
+		color: $text-primary;
+		margin: 0 0 $spacing-xs 0;
+		font-size: $font-size-medium;
+		font-weight: 600;
+	}
+
+	&__info {
+		color: $text-secondary;
+		margin: $spacing-xs 0;
+		font-size: $font-size-small;
+
+		&--temperature {
+			color: #d63384;
+			font-weight: 600;
+		}
+
+		&--humidity {
+			color: #0d6efd;
+		}
+
+		&--wind {
+			color: #fd7e14;
+		}
+	}
+}

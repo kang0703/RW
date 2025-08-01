@@ -1,0 +1,56 @@
+// 변수와 믹스인
+@import 'variables';
+@import 'mixins';
+
+// 기본 스타일
+@import 'base';
+
+// 유틸리티
+@import 'utils/utilities';
+
+// 레이아웃
+@import 'layouts/layout';
+
+// 컴포넌트
+@import 'components/weather-card';
+@import 'components/region-buttons';
+@import 'components/region-page';
+@import 'components/city-cards';
+@import 'components/loading';
+
+// 전역 스타일 (기존 body 스타일과 통합)
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: $font-family;
+//   display: flex;
+//   place-items: center;
+//   min-width: 320px;
+//   min-height: 100vh;
+}
+
+// 스크롤바 스타일링
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+} 

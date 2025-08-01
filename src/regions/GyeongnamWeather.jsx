@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "@dr.pogodin/react-helmet";
+import "../styles/main.scss";
 
 const API_KEY = "3a821b91dd99ce14a86001543d3bfe42";
 
@@ -38,26 +39,8 @@ function GyeongnamWeather() {
     fetchWeather();
   }, []);
 
-  if (loading) {
-    return (
-      <div style={{ padding: "2rem", textAlign: "center" }}>
-        <Helmet>
-          <title>경상남도 날씨 - 실시간 기온 및 날씨 정보</title>
-          <meta name="description" content="경상남도 주요 도시들의 실시간 날씨 정보를 확인하세요. 부산, 울산, 창원, 진주, 통영, 사천, 김해, 양산, 거제, 밀양 등 10개 도시의 날씨를 제공합니다." />
-          <meta name="keywords" content="경상남도날씨, 경상남도기온, 경상남도기상, 부산날씨, 울산날씨, 창원날씨, 진주날씨, 통영날씨, 사천날씨, 김해날씨, 양산날씨, 거제날씨, 밀양날씨" />
-          <meta property="og:title" content="경상남도 날씨 - 실시간 기온 및 날씨 정보" />
-          <meta property="og:description" content="경상남도 주요 도시들의 실시간 날씨 정보를 확인하세요." />
-          <meta property="og:type" content="website" />
-        </Helmet>
-        <h1>경상남도 날씨</h1>
-        <p>날씨 정보를 불러오는 중...</p>
-        <button onClick={() => navigate("/")}>뒤로가기</button>
-      </div>
-    );
-  }
-
   return (
-    <div style={{ padding: "2rem" }}>
+    <div className="region-page region-page--gyeongnam">
       <Helmet>
         <title>경상남도 날씨 - 실시간 기온 및 날씨 정보</title>
         <meta name="description" content="경상남도 주요 도시들의 실시간 날씨 정보를 확인하세요. 부산, 울산, 창원, 진주, 통영, 사천, 김해, 양산, 거제, 밀양 등 10개 도시의 날씨를 제공합니다." />
@@ -66,52 +49,49 @@ function GyeongnamWeather() {
         <meta property="og:description" content="경상남도 주요 도시들의 실시간 날씨 정보를 확인하세요." />
         <meta property="og:type" content="website" />
       </Helmet>
-      
-      <h1>🌊 경상남도 날씨</h1>
-      
-      <div style={{ 
-        display: "grid", 
-        gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", 
-        gap: "1rem",
-        marginBottom: "2rem"
-      }}>
-        {cities.map(city => {
-          const weather = weatherData[city];
-          if (!weather) return null;
-          
-          return (
-            <div key={city} style={{
-              border: "1px solid #ddd",
-              borderRadius: "8px",
-              padding: "1rem",
-              backgroundColor: "#ffffff",
-              boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
-              color: "#333333"
-            }}>
-              <h3 style={{ color: "#333333", margin: "0 0 0.5rem 0" }}>{weather.name}</h3>
-              <p style={{ color: "#333333", margin: "0.25rem 0" }}>🌡️ 온도: {weather.main.temp}°C</p>
-              <p style={{ color: "#333333", margin: "0.25rem 0" }}>☁️ 날씨: {weather.weather[0].description}</p>
-              <p style={{ color: "#333333", margin: "0.25rem 0" }}>💧 습도: {weather.main.humidity}%</p>
-              <p style={{ color: "#333333", margin: "0.25rem 0" }}>💨 풍속: {weather.wind.speed} m/s</p>
-            </div>
-          );
-        })}
+
+      <div className="region-page__container">
+        <h1 className="region-page__title">🌊 경상남도 날씨</h1>
+
+        {loading ? (
+          <div className="loading">
+            <div className="loading__spinner"></div>
+            <p className="loading__text">날씨 정보를 불러오는 중...</p>
+          </div>
+        ) : (
+          <div className="city-cards">
+            {cities.map(city => {
+              const weather = weatherData[city];
+              if (!weather) return null;
+              
+              return (
+                <div key={city} className="city-card">
+                  <h3 className="city-card__title">{weather.name}</h3>
+                  <p className="city-card__info city-card__info--temperature">
+                    🌡️ 온도: {weather.main.temp}°C
+                  </p>
+                  <p className="city-card__info">
+                    ☁️ 날씨: {weather.weather[0].description}
+                  </p>
+                  <p className="city-card__info">
+                    💧 습도: {weather.main.humidity}%
+                  </p>
+                  <p className="city-card__info city-card__info--wind">
+                    💨 풍속: {weather.wind.speed} m/s
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <button
+          className="region-page__back-button"
+          onClick={() => navigate("/")}
+        >
+          &#8592;
+        </button>
       </div>
-      
-      <button 
-        onClick={() => navigate("/")}
-        style={{
-          padding: "10px 20px",
-          fontSize: "16px",
-          backgroundColor: "#007bff",
-          color: "white",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer"
-        }}
-      >
-        뒤로가기
-      </button>
     </div>
   );
 }

@@ -1,0 +1,96 @@
+@import 'variables';
+
+// 그라데이션 배경 믹스인
+@mixin gradient-bg($start-color, $end-color) {
+  background: linear-gradient(135deg, $start-color 0%, $end-color 100%);
+}
+
+// 카드 스타일 믹스인
+@mixin card-style {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: $border-radius-lg;
+  box-shadow: $shadow-heavy;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+// 버튼 호버 효과 믹스인
+@mixin button-hover {
+  transition: $transition;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $shadow-medium;
+  }
+}
+
+// 플렉스 중앙 정렬 믹스인
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// 플렉스 컬럼 중앙 정렬 믹스인
+@mixin flex-column-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+// 반응형 그리드 믹스인
+@mixin responsive-grid($min-width: 200px) {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax($min-width, 1fr));
+  gap: $spacing-sm;
+}
+
+// 텍스트 그림자 믹스인
+@mixin text-shadow {
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+// 전체 화면 높이 믹스인
+@mixin full-height {
+//   min-height: 100vh;
+  height: 100vh;
+}
+
+// 반응형 미디어 쿼리 믹스인
+@mixin mobile {
+  @media (max-width: $breakpoint-sm) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: $breakpoint-sm) and (max-width: $breakpoint-md) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: $breakpoint-md) {
+    @content;
+  }
+}
+
+// 정보 카드 스타일 믹스인
+@mixin info-card($type) {
+  $gradient: map-get($info-card-colors, $type);
+  background: $gradient;
+  padding: $spacing-sm;
+  border-radius: $border-radius-sm;
+  text-align: center;
+  
+  h3 {
+    margin: 0 0 $spacing-xs 0;
+    color: $text-primary;
+  }
+  
+  p {
+    margin: 0;
+    font-size: $font-size-medium;
+    font-weight: bold;
+  }
+} 
