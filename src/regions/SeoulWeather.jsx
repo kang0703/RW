@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { Helmet } from "@dr.pogodin/react-helmet";
+import EventInfo from "../components/EventInfo";
 import "../styles/main.scss";
 
 const API_KEY = "3a821b91dd99ce14a86001543d3bfe42";
@@ -9,21 +9,22 @@ const API_KEY = "3a821b91dd99ce14a86001543d3bfe42";
 function SeoulWeather() {
 	const [weather, setWeather] = useState(null);
 	const [loading, setLoading] = useState(true);
-	const navigate = useNavigate();
 
 	useEffect(() => {
-		axios
-			.get(
-				`https://api.openweathermap.org/data/2.5/weather?q=Seoul&appid=${API_KEY}&units=metric`
-			)
-			.then((res) => {
-				setWeather(res.data);
+		const fetchWeather = async () => {
+			try {
+				const response = await axios.get(
+					`https://api.openweathermap.org/data/2.5/weather?q=Seoul,KR&appid=${API_KEY}&units=metric`
+				);
+				setWeather(response.data);
 				setLoading(false);
-			})
-			.catch((err) => {
-				console.error(err);
+			} catch (error) {
+				console.error("날씨 데이터를 가져오는 중 오류 발생:", error);
 				setLoading(false);
-			});
+			}
+		};
+
+		fetchWeather();
 	}, []);
 
 	return (
@@ -89,12 +90,8 @@ function SeoulWeather() {
 					</div>
 				)}
 
-				<button
-					className="region-page__back-button"
-					onClick={() => navigate("/")}
-				>
-					&#8592;
-				</button>
+				{/* 행사정보 컴포넌트 추가 */}
+				<EventInfo regionName="서울" cityName="Seoul" />
 			</div>
 		</div>
 	);

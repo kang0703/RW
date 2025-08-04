@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { Helmet } from "@dr.pogodin/react-helmet";
+import EventInfo from "../components/EventInfo";
 import "../styles/main.scss";
 
 const API_KEY = "3a821b91dd99ce14a86001543d3bfe42";
@@ -11,13 +11,12 @@ const cities = ["Busan", "Ulsan", "Changwon", "Jinju", "Tongyeong", "Sacheon", "
 function GyeongnamWeather() {
   const [weatherData, setWeatherData] = useState({});
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchWeather = async () => {
       try {
         const weatherMap = {};
-        
+
         for (const city of cities) {
           try {
             const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city},KR&appid=${API_KEY}&units=metric`);
@@ -27,7 +26,7 @@ function GyeongnamWeather() {
             // 실패한 도시는 건너뛰고 계속 진행
           }
         }
-        
+
         setWeatherData(weatherMap);
         setLoading(false);
       } catch (error) {
@@ -85,12 +84,8 @@ function GyeongnamWeather() {
           </div>
         )}
 
-        <button
-          className="region-page__back-button"
-          onClick={() => navigate("/")}
-        >
-          &#8592;
-        </button>
+        {/* 행사정보 컴포넌트 추가 */}
+        <EventInfo regionName="경상남도" cityName="Gyeongnam" />
       </div>
     </div>
   );

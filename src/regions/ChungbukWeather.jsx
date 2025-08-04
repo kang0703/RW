@@ -1,23 +1,22 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { Helmet } from "@dr.pogodin/react-helmet";
+import EventInfo from "../components/EventInfo";
 import "../styles/main.scss";
 
 const API_KEY = "3a821b91dd99ce14a86001543d3bfe42";
 
-const cities = ["Cheongju", "Chungju", "Jecheon", "Boeun", "Okcheon", "Yeongdong", "Jincheon", "Goesan", "Eumseong", "Danyang"];
+const cities = ["Cheongju","Chungju","Jecheon","Boeun","Okcheon","Yeongdong","Jincheon","Goesan","Eumseong","Jeungpyeong"];
 
 function ChungbukWeather() {
   const [weatherData, setWeatherData] = useState({});
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchWeather = async () => {
       try {
         const weatherMap = {};
-        
+
         for (const city of cities) {
           try {
             const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city},KR&appid=${API_KEY}&units=metric`);
@@ -27,7 +26,7 @@ function ChungbukWeather() {
             // 실패한 도시는 건너뛰고 계속 진행
           }
         }
-        
+
         setWeatherData(weatherMap);
         setLoading(false);
       } catch (error) {
@@ -43,8 +42,8 @@ function ChungbukWeather() {
     <div className="region-page region-page--chungbuk">
       <Helmet>
         <title>충청북도 날씨 - 실시간 기온 및 날씨 정보</title>
-        <meta name="description" content="충청북도 주요 도시들의 실시간 날씨 정보를 확인하세요. 청주, 충주, 제천, 보은, 옥천, 영동, 진천, 괴산, 음성, 단양 등 10개 도시의 날씨를 제공합니다." />
-        <meta name="keywords" content="충청북도날씨, 충청북도기온, 충청북도기상, 청주날씨, 충주날씨, 제천날씨, 보은날씨, 옥천날씨, 영동날씨, 진천날씨, 괴산날씨, 음성날씨, 단양날씨" />
+        <meta name="description" content="충청북도 주요 도시들의 실시간 날씨 정보를 확인하세요. Cheongju, Chungju, Jecheon, Boeun, Okcheon, Yeongdong, Jincheon, Goesan, Eumseong, Jeungpyeong 등 10개 도시의 날씨를 제공합니다." />
+        <meta name="keywords" content="충청북도날씨, 충청북도기온, 충청북도기상, Cheongju날씨, Chungju날씨, Jecheon날씨, Boeun날씨, Okcheon날씨, Yeongdong날씨, Jincheon날씨, Goesan날씨, Eumseong날씨, Jeungpyeong날씨" />
         <meta property="og:title" content="충청북도 날씨 - 실시간 기온 및 날씨 정보" />
         <meta property="og:description" content="충청북도 주요 도시들의 실시간 날씨 정보를 확인하세요." />
         <meta property="og:type" content="website" />
@@ -85,15 +84,11 @@ function ChungbukWeather() {
           </div>
         )}
 
-        <button
-          className="region-page__back-button"
-          onClick={() => navigate("/")}
-        >
-          &#8592;
-        </button>
+        {/* 행사정보 컴포넌트 추가 */}
+        <EventInfo regionName="충청북도" cityName="Chungbuk" />
       </div>
     </div>
   );
 }
 
-export default ChungbukWeather; 
+export default ChungbukWeather;

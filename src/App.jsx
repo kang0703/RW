@@ -118,9 +118,6 @@ function App() {
 			</Helmet>
 			
 			<div className="weather-app__container">
-				<h1 className="weather-app__title">
-					🌤️ 날씨 웹앱
-				</h1>
 
 				{/* 서울 날씨 메인 카드 */}
 				{weather && (
@@ -161,69 +158,6 @@ function App() {
 					</div>
 				)}
 
-				{/* 지역 버튼 그리드 */}
-				<div className="region-buttons">
-					<button 
-						className="region-button region-button--seoul"
-						onClick={() => navigate("/seoul")}
-					>
-						서울 날씨
-					</button>
-					<button 
-						className="region-button region-button--gyeonggi"
-						onClick={() => navigate("/gyeonggi")}
-					>
-						경기도
-					</button>
-					<button 
-						className="region-button region-button--gangwon"
-						onClick={() => navigate("/gangwon")}
-					>
-						강원도
-					</button>
-					<button 
-						className="region-button region-button--chungbuk"
-						onClick={() => navigate("/chungbuk")}
-					>
-						충청북도
-					</button>
-					<button 
-						className="region-button region-button--chungnam"
-						onClick={() => navigate("/chungnam")}
-					>
-						충청남도
-					</button>
-					<button 
-						className="region-button region-button--jeonbuk"
-						onClick={() => navigate("/jeonbuk")}
-					>
-						전라북도
-					</button>
-					<button 
-						className="region-button region-button--jeonnam"
-						onClick={() => navigate("/jeonnam")}
-					>
-						전라남도
-					</button>
-					<button 
-						className="region-button region-button--gyeongbuk"
-						onClick={() => navigate("/gyeongbuk")}
-					>
-						경상북도
-					</button>
-					<button 
-						className="region-button region-button--gyeongnam"
-						onClick={() => navigate("/gyeongnam")}
-					>
-						경상남도
-					</button>
-					<button 
-						className="region-button region-button--jeju"
-						onClick={() => navigate("/jeju")}
-					>
-						제주도
-					</button>
-				</div>
 			</div>
 		</div>
 	);

@@ -1,23 +1,22 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import { Helmet } from "@dr.pogodin/react-helmet";
+import EventInfo from "../components/EventInfo";
 import "../styles/main.scss";
 
 const API_KEY = "3a821b91dd99ce14a86001543d3bfe42";
 
-const cities = ["Chuncheon", "Wonju", "Gangneung", "Donghae", "Sokcho", "Samcheok", "Hongcheon", "Cheorwon", "Hwacheon", "Yanggu"];
+const cities = ["Chuncheon","Wonju","Gangneung","Donghae","Sokcho","Samcheok","Hongcheon","Cheorwon","Hwacheon","Yanggu"];
 
 function GangwonWeather() {
   const [weatherData, setWeatherData] = useState({});
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchWeather = async () => {
       try {
         const weatherMap = {};
-        
+
         for (const city of cities) {
           try {
             const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city},KR&appid=${API_KEY}&units=metric`);
@@ -27,7 +26,7 @@ function GangwonWeather() {
             // 실패한 도시는 건너뛰고 계속 진행
           }
         }
-        
+
         setWeatherData(weatherMap);
         setLoading(false);
       } catch (error) {
@@ -43,8 +42,8 @@ function GangwonWeather() {
     <div className="region-page region-page--gangwon">
       <Helmet>
         <title>강원도 날씨 - 실시간 기온 및 날씨 정보</title>
-        <meta name="description" content="강원도 주요 도시들의 실시간 날씨 정보를 확인하세요. 춘천, 원주, 강릉, 동해, 속초, 삼척, 홍천, 철원, 화천, 양구 등 10개 도시의 날씨를 제공합니다." />
-        <meta name="keywords" content="강원도날씨, 강원도기온, 강원도기상, 춘천날씨, 원주날씨, 강릉날씨, 동해날씨, 속초날씨, 삼척날씨, 홍천날씨, 철원날씨, 화천날씨, 양구날씨" />
+        <meta name="description" content="강원도 주요 도시들의 실시간 날씨 정보를 확인하세요. Chuncheon, Wonju, Gangneung, Donghae, Sokcho, Samcheok, Hongcheon, Cheorwon, Hwacheon, Yanggu 등 10개 도시의 날씨를 제공합니다." />
+        <meta name="keywords" content="강원도날씨, 강원도기온, 강원도기상, Chuncheon날씨, Wonju날씨, Gangneung날씨, Donghae날씨, Sokcho날씨, Samcheok날씨, Hongcheon날씨, Cheorwon날씨, Hwacheon날씨, Yanggu날씨" />
         <meta property="og:title" content="강원도 날씨 - 실시간 기온 및 날씨 정보" />
         <meta property="og:description" content="강원도 주요 도시들의 실시간 날씨 정보를 확인하세요." />
         <meta property="og:type" content="website" />
@@ -85,15 +84,11 @@ function GangwonWeather() {
           </div>
         )}
 
-        <button
-          className="region-page__back-button"
-          onClick={() => navigate("/")}
-        >
-          &#8592;
-        </button>
+        {/* 행사정보 컴포넌트 추가 */}
+        <EventInfo regionName="강원도" cityName="Gangwon" />
       </div>
     </div>
   );
 }
 
-export default GangwonWeather; 
+export default GangwonWeather;
