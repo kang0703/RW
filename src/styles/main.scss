@@ -13,6 +13,7 @@
 
 // 컴포넌트
 @import 'components/weather-card';
+@import 'components/weather-icons';
 @import 'components/region-buttons';
 @import 'components/region-page';
 @import 'components/city-cards';
@@ -34,10 +35,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: $font-family;
-//   display: flex;
-//   place-items: center;
-//   min-width: 320px;
-//   min-height: 100vh;
+  background: #ffffff;
 }
 
 // 스크롤바 스타일링
@@ -56,4 +54,10 @@ body {
   &:hover {
     background: rgba(255, 255, 255, 0.5);
   }
+}
+
+// 피그마 디자인 스타일
+.weather-app {
+  min-height: 100vh;
+  background: #ffffff;
 } 

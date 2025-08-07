@@ -1,96 +1,71 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Helmet } from "@dr.pogodin/react-helmet";
+import { useState } from "react";
 import "../styles/main.scss";
 
 function Layout({ children }) {
 	const navigate = useNavigate();
 	const location = useLocation();
+	const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+	// 메뉴 토글 함수
+	const toggleMenu = () => {
+		setIsMenuOpen(!isMenuOpen);
+	};
+
+	// 메뉴 닫기 함수
+	const closeMenu = () => {
+		setIsMenuOpen(false);
+	};
 
 	return (
 		<div className="layout">
 			{/* 상단 고정 메뉴 */}
 			<header className="layout__header">
 				<div className="layout__header-container">
-					<h1 className="layout__title">
-						🌤️ 날씨 웹앱
+					{/* 로고 (왼쪽) */}
+					<h1 className="layout__logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
+						🌤️ 갈래말래 날씨여행
 					</h1>
 					
-					<nav className="layout__nav">
-						<button 
-							className={`layout__nav-button ${location.pathname === "/" ? "layout__nav-button--active" : ""}`}
-							onClick={() => navigate("/")}
-						>
-							🏠 메인
+					{/* 오른쪽 버튼들 */}
+					<div className="layout__header-right">
+						<a href="/events" className="layout__events-btn">행사</a>
+						<button className="layout__menu-btn" onClick={toggleMenu}>
+							<span></span>
+							<span></span>
+							<span></span>
 						</button>
-						<button 
-							className={`layout__nav-button ${location.pathname === "/events" ? "layout__nav-button--active" : ""}`}
-							onClick={() => navigate("/events")}
-						>
-							🎉 행사
-						</button>
-						<button 
-							className={`layout__nav-button ${location.pathname === "/seoul" ? "layout__nav-button--active" : ""}`}
-							onClick={() => navigate("/seoul")}
-						>
-							서울
-						</button>
-						<button 
-							className={`layout__nav-button ${location.pathname === "/gyeonggi" ? "layout__nav-button--active" : ""}`}
-							onClick={() => navigate("/gyeonggi")}
-						>
-							경기도
-						</button>
-						<button 
-							className={`layout__nav-button ${location.pathname === "/gangwon" ? "layout__nav-button--active" : ""}`}
-							onClick={() => navigate("/gangwon")}
-						>
-							강원도
-						</button>
-						<button 
-							className={`layout__nav-button ${location.pathname === "/chungbuk" ? "layout__nav-button--active" : ""}`}
-							onClick={() => navigate("/chungbuk")}
-						>
-							충청북도
-						</button>
-						<button 
-							className={`layout__nav-button ${location.pathname === "/chungnam" ? "layout__nav-button--active" : ""}`}
-							onClick={() => navigate("/chungnam")}
-						>
-							충청남도
-						</button>
-						<button 
-							className={`layout__nav-button ${location.pathname === "/jeonbuk" ? "layout__nav-button--active" : ""}`}
-							onClick={() => navigate("/jeonbuk")}
-						>
-							전라북도
-						</button>
-						<button 
-							className={`layout__nav-button ${location.pathname === "/jeonnam" ? "layout__nav-button--active" : ""}`}
-							onClick={() => navigate("/jeonnam")}
-						>
-							전라남도
-						</button>
-						<button 
-							className={`layout__nav-button ${location.pathname === "/gyeongbuk" ? "layout__nav-button--active" : ""}`}
-							onClick={() => navigate("/gyeongbuk")}
-						>
-							경상북도
-						</button>
-						<button 
-							className={`layout__nav-button ${location.pathname === "/gyeongnam" ? "layout__nav-button--active" : ""}`}
-							onClick={() => navigate("/gyeongnam")}
-						>
-							경상남도
-						</button>
-						<button 
-							className={`layout__nav-button ${location.pathname === "/jeju" ? "layout__nav-button--active" : ""}`}
-							onClick={() => navigate("/jeju")}
-						>
-							제주도
-						</button>
-					</nav>
+					</div>
 				</div>
 			</header>
+
+			{/* 햄버거 메뉴 */}
+			{isMenuOpen && (
+				<div className="layout__menu">
+					<div className="layout__menu-overlay" onClick={closeMenu}></div>
+					<div className="layout__menu-content">
+						<div className="layout__menu-header">
+							<h3>지역 선택</h3>
+							<button className="layout__menu-close" onClick={closeMenu}>×</button>
+						</div>
+						<div className="layout__menu-items">
+							<a href="/" onClick={closeMenu}>🏠 메인</a>
+							<a href="/events" onClick={closeMenu}>🎉 행사</a>
+							<a href="/seoul" onClick={closeMenu}>서울</a>
+							<a href="/gyeonggi" onClick={closeMenu}>경기도</a>
+							<a href="/gangwon" onClick={closeMenu}>강원도</a>
+							<a href="/chungbuk" onClick={closeMenu}>충청북도</a>
+							<a href="/chungnam" onClick={closeMenu}>충청남도</a>
+							<a href="/jeonbuk" onClick={closeMenu}>전라북도</a>
+							<a href="/jeonnam" onClick={closeMenu}>전라남도</a>
+							<a href="/gyeongbuk" onClick={closeMenu}>경상북도</a>
+							<a href="/gyeongnam" onClick={closeMenu}>경상남도</a>
+							<a href="/jeju" onClick={closeMenu}>제주도</a>
+						</div>
+					</div>
+				</div>
+			)}
 
 			{/* 메인 콘텐츠 영역 */}
 			<main className="layout__main">
