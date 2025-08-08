@@ -17,6 +17,11 @@ import GyeongbukWeather from "./regions/GyeongbukWeather.jsx";
 import GyeongnamWeather from "./regions/GyeongnamWeather.jsx";
 import JejuWeather from "./regions/JejuWeather.jsx";
 
+// 페이지 컴포넌트들
+import About from "./pages/About.jsx";
+import Privacy from "./pages/Privacy.jsx";
+import Terms from "./pages/Terms.jsx";
+
 
 // createRoot(document.getElementById('root')).render(
 //   <StrictMode>
@@ -41,6 +46,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <Route path="/gyeongbuk" element={<GyeongbukWeather />} />
           <Route path="/gyeongnam" element={<GyeongnamWeather />} />
           <Route path="/jeju" element={<JejuWeather />} />
+          
+          {/* 페이지 라우트 */}
+          <Route path="/about" element={<About />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
         </Routes>
       </Layout>
     </BrowserRouter>

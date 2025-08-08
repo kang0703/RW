@@ -1,6 +1,7 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Helmet } from "@dr.pogodin/react-helmet";
 import { useState } from "react";
+import Footer from "./Footer.jsx";
 import "../styles/main.scss";
 
 function Layout({ children }) {
@@ -71,6 +72,9 @@ function Layout({ children }) {
 			<main className="layout__main">
 				{children}
 			</main>
+
+			{/* 푸터 */}
+			<Footer />
 		</div>
 	);
 }

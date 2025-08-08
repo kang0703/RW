@@ -463,6 +463,7 @@
 	margin-right: auto;
 	width: 100%;
 	box-sizing: border-box;
+	min-height: calc(100vh - 80px); // 푸터 공간 확보
 }
 
 // 지역별 페이지 레이아웃
