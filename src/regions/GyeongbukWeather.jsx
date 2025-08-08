@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Helmet } from "@dr.pogodin/react-helmet";
 import EventInfo from "../components/EventInfo";
+import weatherService from "../services/weatherService";
 import "../styles/main.scss";
-
-const API_KEY = "3a821b91dd99ce14a86001543d3bfe42";
 
 const cities = ["Daegu","Pohang","Gumi","Gyeongsan","Gyeongju","Sangju","Yeongju","Yeongcheon","Andong","Gimcheon"];
 
@@ -15,17 +13,14 @@ function GyeongbukWeather() {
   useEffect(() => {
     const fetchWeather = async () => {
       try {
+        const weatherArray = await weatherService.getWeatherForMultipleCities(cities);
         const weatherMap = {};
-
-        for (const city of cities) {
-          try {
-            const response = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${city},KR&appid=${API_KEY}&units=metric`);
-            weatherMap[city] = response.data;
-          } catch (error) {
-            console.error(`${city} 도시의 날씨 데이터를 가져오는 중 오류 발생:`, error);
-            // 실패한 도시는 건너뛰고 계속 진행
+        
+        weatherArray.forEach((weather, index) => {
+          if (weather) {
+            weatherMap[cities[index]] = weather;
           }
-        }
+        });
 
         setWeatherData(weatherMap);
         setLoading(false);

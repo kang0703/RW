@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Helmet } from "@dr.pogodin/react-helmet";
 import EventInfo from "../components/EventInfo";
+import weatherService from "../services/weatherService";
 import "../styles/main.scss";
-
-const API_KEY = "3a821b91dd99ce14a86001543d3bfe42";
 
 function SeoulWeather() {
 	const [weather, setWeather] = useState(null);
@@ -13,10 +11,8 @@ function SeoulWeather() {
 	useEffect(() => {
 		const fetchWeather = async () => {
 			try {
-				const response = await axios.get(
-					`https://api.openweathermap.org/data/2.5/weather?q=Seoul,KR&appid=${API_KEY}&units=metric`
-				);
-				setWeather(response.data);
+				const weatherData = await weatherService.getWeatherByCity("Seoul");
+				setWeather(weatherData);
 				setLoading(false);
 			} catch (error) {
 				console.error("날씨 데이터를 가져오는 중 오류 발생:", error);
