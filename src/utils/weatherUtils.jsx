@@ -7,9 +7,9 @@ export const getWeatherIcon = (weatherMain, weatherDescription) => {
 	// 맑음 - 태양 빛나는 애니메이션
 	if (weatherMain === "Clear") {
 		return (
-			<svg width="150" height="150" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="weather-icon clear">
-				<circle cx="12" cy="12" r="5" fill="#FFD700" stroke="#FFA500" strokeWidth="1" className="sun-core"/>
-				<path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" stroke="#FFD700" strokeWidth="1" strokeLinecap="round" className="sun-rays"/>
+			<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="weather-icon clear">
+				<circle cx="100" cy="100" r="50" fill="#FFC107" className="sun-core"/>
+				<path d="M100 20 L100 40 M141.42 41.42 L131.42 51.42 M180 100 L160 100 M141.42 158.58 L131.42 148.58 M100 180 L100 160 M58.58 158.58 L68.58 148.58 M20 100 L40 100 M58.58 41.42 L68.58 51.42" stroke="#FFC107" strokeWidth="6" strokeLinecap="round" className="sun-rays"/>
 			</svg>
 		);
 	}
