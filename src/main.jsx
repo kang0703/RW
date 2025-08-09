@@ -19,8 +19,6 @@ import JejuWeather from "./regions/JejuWeather.jsx";
 
 // 페이지 컴포넌트들
 import About from "./pages/About.jsx";
-import Privacy from "./pages/Privacy.jsx";
-import Terms from "./pages/Terms.jsx";
 
 
 // createRoot(document.getElementById('root')).render(
@@ -49,8 +47,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           
           {/* 페이지 라우트 */}
           <Route path="/about" element={<About />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/terms" element={<Terms />} />
         </Routes>
       </Layout>
     </BrowserRouter>

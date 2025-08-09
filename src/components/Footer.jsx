@@ -11,8 +11,6 @@ function Footer() {
 				<div className="footer__links-section">
 					<div className="footer__links">
 						<Link to="/about" className="footer__link">소개</Link>
-						<Link to="/terms" className="footer__link">이용약관</Link>
-						<Link to="/privacy" className="footer__link">개인정보처리방침</Link>
 						<a 
 							href="mailto:kcmschool@naver.com" 
 							className="footer__link"
