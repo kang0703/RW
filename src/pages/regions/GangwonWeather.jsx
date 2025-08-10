@@ -1,28 +1,26 @@
 import { useEffect, useState } from "react";
 import { Helmet } from "@dr.pogodin/react-helmet";
-import EventInfo from "../components/EventInfo";
-import weatherService from "../services/weatherService";
-import "../styles/main.scss";
+import EventInfo from "../../components/EventInfo";
+import Forecast from "../../components/Forecast";
+import weatherService from "../../services/weatherService";
+import "../../styles/main.scss";
 
 const cities = ["Chuncheon","Wonju","Gangneung","Donghae","Sokcho","Samcheok","Hongcheon","Cheorwon","Hwacheon","Yanggu"];
 
 function GangwonWeather() {
-  const [weatherData, setWeatherData] = useState({});
+  const [weather, setWeather] = useState(null);
+  const [forecast, setForecast] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchWeather = async () => {
+    const fetchWeatherData = async () => {
       try {
-        const weatherArray = await weatherService.getWeatherForMultipleCities(cities);
-        const weatherMap = {};
-        
-        weatherArray.forEach((weather, index) => {
-          if (weather) {
-            weatherMap[cities[index]] = weather;
-          }
-        });
-
-        setWeatherData(weatherMap);
+        const [weatherData, forecastData] = await Promise.all([
+          weatherService.getWeatherByCity("Seoul"),
+          weatherService.getForecastByCity("Seoul")
+        ]);
+        setWeather(weatherData);
+        setForecast(forecastData);
         setLoading(false);
       } catch (error) {
         console.error("날씨 데이터를 가져오는 중 오류 발생:", error);
@@ -30,7 +28,7 @@ function GangwonWeather() {
       }
     };
 
-    fetchWeather();
+    fetchWeatherData();
   }, []);
 
   return (
@@ -79,8 +77,11 @@ function GangwonWeather() {
           </div>
         )}
 
+        {/* 5일 예보 컴포넌트 추가 */}
+        {forecast && <Forecast forecastData={forecast} />}
+
         {/* 행사정보 컴포넌트 추가 */}
-        <EventInfo regionName="강원도" cityName="Gangwon" />
+        <EventInfo regionName="강원" cityName="Seoul" />
       </div>
     </div>
   );

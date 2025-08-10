@@ -6,16 +6,16 @@ import Layout from "./components/Layout.jsx";
 
 import App from './App.jsx';
 import AllEvents from "./components/AllEvents.jsx";
-import SeoulWeather from "./regions/SeoulWeather.jsx";
-import GyeonggiWeather from "./regions/GyeonggiWeather.jsx";
-import GangwonWeather from "./regions/GangwonWeather.jsx";
-import ChungbukWeather from "./regions/ChungbukWeather.jsx";
-import ChungnamWeather from "./regions/ChungnamWeather.jsx";
-import JeonbukWeather from "./regions/JeonbukWeather.jsx";
-import JeonnamWeather from "./regions/JeonnamWeather.jsx";
-import GyeongbukWeather from "./regions/GyeongbukWeather.jsx";
-import GyeongnamWeather from "./regions/GyeongnamWeather.jsx";
-import JejuWeather from "./regions/JejuWeather.jsx";
+import SeoulWeather from "./pages/regions/SeoulWeather.jsx";
+import GyeonggiWeather from "./pages/regions/GyeonggiWeather.jsx";
+import GangwonWeather from "./pages/regions/GangwonWeather.jsx";
+import ChungbukWeather from "./pages/regions/ChungbukWeather.jsx";
+import ChungnamWeather from "./pages/regions/ChungnamWeather.jsx";
+import JeonbukWeather from "./pages/regions/JeonbukWeather.jsx";
+import JeonnamWeather from "./pages/regions/JeonnamWeather.jsx";
+import GyeongbukWeather from "./pages/regions/GyeongbukWeather.jsx";
+import GyeongnamWeather from "./pages/regions/GyeongnamWeather.jsx";
+import JejuWeather from "./pages/regions/JejuWeather.jsx";
 
 // 페이지 컴포넌트들
 import About from "./pages/About.jsx";

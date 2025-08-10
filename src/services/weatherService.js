@@ -131,6 +131,282 @@ const DUMMY_WEATHER_DATA = {
 	}
 };
 
+// 더미 5일 예보 데이터
+const DUMMY_FORECAST_DATA = {
+	"Seoul": {
+		"list": [
+			{
+				"dt": 1703123456,
+				"main": {"temp": 22, "temp_min": 18, "temp_max": 26, "humidity": 45},
+				"weather": [{"main": "Clear", "description": "clear sky", "icon": "01d"}],
+				"dt_txt": "2023-12-21 12:00:00"
+			},
+			{
+				"dt": 1703137056,
+				"main": {"temp": 20, "temp_min": 16, "temp_max": 24, "humidity": 50},
+				"weather": [{"main": "Clouds", "description": "few clouds", "icon": "02d"}],
+				"dt_txt": "2023-12-22 12:00:00"
+			},
+			{
+				"dt": 1703223456,
+				"main": {"temp": 18, "temp_min": 14, "temp_max": 22, "humidity": 55},
+				"weather": [{"main": "Rain", "description": "light rain", "icon": "10d"}],
+				"dt_txt": "2023-12-23 12:00:00"
+			},
+			{
+				"dt": 1703309856,
+				"main": {"temp": 16, "temp_min": 12, "temp_max": 20, "humidity": 60},
+				"weather": [{"main": "Clouds", "description": "scattered clouds", "icon": "03d"}],
+				"dt_txt": "2023-12-24 12:00:00"
+			},
+			{
+				"dt": 1703396256,
+				"main": {"temp": 19, "temp_min": 15, "temp_max": 23, "humidity": 48},
+				"weather": [{"main": "Clear", "description": "clear sky", "icon": "01d"}],
+				"dt_txt": "2023-12-25 12:00:00"
+			}
+		]
+	},
+	"Busan": {
+		"list": [
+			{
+				"dt": 1703123456,
+				"main": {"temp": 24, "temp_min": 20, "temp_max": 28, "humidity": 55},
+				"weather": [{"main": "Clouds", "description": "few clouds", "icon": "02d"}],
+				"dt_txt": "2023-12-21 12:00:00"
+			},
+			{
+				"dt": 1703137056,
+				"main": {"temp": 22, "temp_min": 18, "temp_max": 26, "humidity": 60},
+				"weather": [{"main": "Rain", "description": "light rain", "icon": "10d"}],
+				"dt_txt": "2023-12-22 12:00:00"
+			},
+			{
+				"dt": 1703223456,
+				"main": {"temp": 20, "temp_min": 16, "temp_max": 24, "humidity": 65},
+				"weather": [{"main": "Clouds", "description": "broken clouds", "icon": "04d"}],
+				"dt_txt": "2023-12-23 12:00:00"
+			},
+			{
+				"dt": 1703309856,
+				"main": {"temp": 18, "temp_min": 14, "temp_max": 22, "humidity": 70},
+				"weather": [{"main": "Rain", "description": "moderate rain", "icon": "10d"}],
+				"dt_txt": "2023-12-24 12:00:00"
+			},
+			{
+				"dt": 1703396256,
+				"main": {"temp": 21, "temp_min": 17, "temp_max": 25, "humidity": 58},
+				"weather": [{"main": "Clear", "description": "clear sky", "icon": "01d"}],
+				"dt_txt": "2023-12-25 12:00:00"
+			}
+		]
+	},
+	"Daegu": {
+		"list": [
+			{
+				"dt": 1703123456,
+				"main": {"temp": 25, "temp_min": 21, "temp_max": 29, "humidity": 50},
+				"weather": [{"main": "Clouds", "description": "scattered clouds", "icon": "03d"}],
+				"dt_txt": "2023-12-21 12:00:00"
+			},
+			{
+				"dt": 1703137056,
+				"main": {"temp": 23, "temp_min": 19, "temp_max": 27, "humidity": 55},
+				"weather": [{"main": "Clear", "description": "clear sky", "icon": "01d"}],
+				"dt_txt": "2023-12-22 12:00:00"
+			},
+			{
+				"dt": 1703223456,
+				"main": {"temp": 21, "temp_min": 17, "temp_max": 25, "humidity": 60},
+				"weather": [{"main": "Clouds", "description": "few clouds", "icon": "02d"}],
+				"dt_txt": "2023-12-23 12:00:00"
+			},
+			{
+				"dt": 1703309856,
+				"main": {"temp": 19, "temp_min": 15, "temp_max": 23, "humidity": 65},
+				"weather": [{"main": "Rain", "description": "light rain", "icon": "10d"}],
+				"dt_txt": "2023-12-24 12:00:00"
+			},
+			{
+				"dt": 1703396256,
+				"main": {"temp": 22, "temp_min": 18, "temp_max": 26, "humidity": 52},
+				"weather": [{"main": "Clear", "description": "clear sky", "icon": "01d"}],
+				"dt_txt": "2023-12-25 12:00:00"
+			}
+		]
+	},
+	"Incheon": {
+		"list": [
+			{
+				"dt": 1703123456,
+				"main": {"temp": 20, "temp_min": 16, "temp_max": 24, "humidity": 60},
+				"weather": [{"main": "Clouds", "description": "broken clouds", "icon": "04d"}],
+				"dt_txt": "2023-12-21 12:00:00"
+			},
+			{
+				"dt": 1703137056,
+				"main": {"temp": 18, "temp_min": 14, "temp_max": 22, "humidity": 65},
+				"weather": [{"main": "Rain", "description": "light rain", "icon": "10d"}],
+				"dt_txt": "2023-12-22 12:00:00"
+			},
+			{
+				"dt": 1703223456,
+				"main": {"temp": 16, "temp_min": 12, "temp_max": 20, "humidity": 70},
+				"weather": [{"main": "Clouds", "description": "scattered clouds", "icon": "03d"}],
+				"dt_txt": "2023-12-23 12:00:00"
+			},
+			{
+				"dt": 1703309856,
+				"main": {"temp": 14, "temp_min": 10, "temp_max": 18, "humidity": 75},
+				"weather": [{"main": "Rain", "description": "moderate rain", "icon": "10d"}],
+				"dt_txt": "2023-12-24 12:00:00"
+			},
+			{
+				"dt": 1703396256,
+				"main": {"temp": 17, "temp_min": 13, "temp_max": 21, "humidity": 63},
+				"weather": [{"main": "Clear", "description": "clear sky", "icon": "01d"}],
+				"dt_txt": "2023-12-25 12:00:00"
+			}
+		]
+	},
+	"Gwangju": {
+		"list": [
+			{
+				"dt": 1703123456,
+				"main": {"temp": 23, "temp_min": 19, "temp_max": 27, "humidity": 70},
+				"weather": [{"main": "Thunderstorm", "description": "thunderstorm with light rain", "icon": "11d"}],
+				"dt_txt": "2023-12-21 12:00:00"
+			},
+			{
+				"dt": 1703137056,
+				"main": {"temp": 21, "temp_min": 17, "temp_max": 25, "humidity": 75},
+				"weather": [{"main": "Rain", "description": "moderate rain", "icon": "10d"}],
+				"dt_txt": "2023-12-22 12:00:00"
+			},
+			{
+				"dt": 1703223456,
+				"main": {"temp": 19, "temp_min": 15, "temp_max": 23, "humidity": 80},
+				"weather": [{"main": "Clouds", "description": "broken clouds", "icon": "04d"}],
+				"dt_txt": "2023-12-23 12:00:00"
+			},
+			{
+				"dt": 1703309856,
+				"main": {"temp": 17, "temp_min": 13, "temp_max": 21, "humidity": 85},
+				"weather": [{"main": "Rain", "description": "heavy rain", "icon": "10d"}],
+				"dt_txt": "2023-12-24 12:00:00"
+			},
+			{
+				"dt": 1703396256,
+				"main": {"temp": 20, "temp_min": 16, "temp_max": 24, "humidity": 72},
+				"weather": [{"main": "Clear", "description": "clear sky", "icon": "01d"}],
+				"dt_txt": "2023-12-25 12:00:00"
+			}
+		]
+	},
+	"Daejeon": {
+		"list": [
+			{
+				"dt": 1703123456,
+				"main": {"temp": 21, "temp_min": 17, "temp_max": 25, "humidity": 65},
+				"weather": [{"main": "Drizzle", "description": "light intensity drizzle", "icon": "09d"}],
+				"dt_txt": "2023-12-21 12:00:00"
+			},
+			{
+				"dt": 1703137056,
+				"main": {"temp": 19, "temp_min": 15, "temp_max": 23, "humidity": 70},
+				"weather": [{"main": "Rain", "description": "light rain", "icon": "10d"}],
+				"dt_txt": "2023-12-22 12:00:00"
+			},
+			{
+				"dt": 1703223456,
+				"main": {"temp": 17, "temp_min": 13, "temp_max": 21, "humidity": 75},
+				"weather": [{"main": "Clouds", "description": "scattered clouds", "icon": "03d"}],
+				"dt_txt": "2023-12-23 12:00:00"
+			},
+			{
+				"dt": 1703309856,
+				"main": {"temp": 15, "temp_min": 11, "temp_max": 19, "humidity": 80},
+				"weather": [{"main": "Rain", "description": "moderate rain", "icon": "10d"}],
+				"dt_txt": "2023-12-24 12:00:00"
+			},
+			{
+				"dt": 1703396256,
+				"main": {"temp": 18, "temp_min": 14, "temp_max": 22, "humidity": 67},
+				"weather": [{"main": "Clear", "description": "clear sky", "icon": "01d"}],
+				"dt_txt": "2023-12-25 12:00:00"
+			}
+		]
+	},
+	"Ulsan": {
+		"list": [
+			{
+				"dt": 1703123456,
+				"main": {"temp": 22, "temp_min": 18, "temp_max": 26, "humidity": 75},
+				"weather": [{"main": "Rain", "description": "light rain", "icon": "10d"}],
+				"dt_txt": "2023-12-21 12:00:00"
+			},
+			{
+				"dt": 1703137056,
+				"main": {"temp": 20, "temp_min": 16, "temp_max": 24, "humidity": 80},
+				"weather": [{"main": "Clouds", "description": "broken clouds", "icon": "04d"}],
+				"dt_txt": "2023-12-22 12:00:00"
+			},
+			{
+				"dt": 1703223456,
+				"main": {"temp": 18, "temp_min": 14, "temp_max": 22, "humidity": 85},
+				"weather": [{"main": "Rain", "description": "moderate rain", "icon": "10d"}],
+				"dt_txt": "2023-12-23 12:00:00"
+			},
+			{
+				"dt": 1703309856,
+				"main": {"temp": 16, "temp_min": 12, "temp_max": 20, "humidity": 90},
+				"weather": [{"main": "Rain", "description": "heavy rain", "icon": "10d"}],
+				"dt_txt": "2023-12-24 12:00:00"
+			},
+			{
+				"dt": 1703396256,
+				"main": {"temp": 19, "temp_min": 15, "temp_max": 23, "humidity": 77},
+				"weather": [{"main": "Clear", "description": "clear sky", "icon": "01d"}],
+				"dt_txt": "2023-12-25 12:00:00"
+			}
+		]
+	},
+	"Jeju": {
+		"list": [
+			{
+				"dt": 1703123456,
+				"main": {"temp": 15, "temp_min": 12, "temp_max": 18, "humidity": 80},
+				"weather": [{"main": "Snow", "description": "light snow", "icon": "13d"}],
+				"dt_txt": "2023-12-21 12:00:00"
+			},
+			{
+				"dt": 1703137056,
+				"main": {"temp": 13, "temp_min": 10, "temp_max": 16, "humidity": 85},
+				"weather": [{"main": "Snow", "description": "moderate snow", "icon": "13d"}],
+				"dt_txt": "2023-12-22 12:00:00"
+			},
+			{
+				"dt": 1703223456,
+				"main": {"temp": 11, "temp_min": 8, "temp_max": 14, "humidity": 90},
+				"weather": [{"main": "Snow", "description": "heavy snow", "icon": "13d"}],
+				"dt_txt": "2023-12-23 12:00:00"
+			},
+			{
+				"dt": 1703309856,
+				"main": {"temp": 9, "temp_min": 6, "temp_max": 12, "humidity": 95},
+				"weather": [{"main": "Snow", "description": "moderate snow", "icon": "13d"}],
+				"dt_txt": "2023-12-24 12:00:00"
+			},
+			{
+				"dt": 1703396256,
+				"main": {"temp": 12, "temp_min": 9, "temp_max": 15, "humidity": 82},
+				"weather": [{"main": "Clear", "description": "clear sky", "icon": "01d"}],
+				"dt_txt": "2023-12-25 12:00:00"
+			}
+		]
+	}
+};
+
 class WeatherService {
 	/**
 	 * 더미 데이터를 반환하는 함수
@@ -257,6 +533,67 @@ class WeatherService {
 				}
 			);
 		});
+	}
+
+	/**
+	 * 도시명으로 5일 예보를 가져옵니다.
+	 * @param {string} cityName - 도시명 (예: "Seoul", "Busan")
+	 * @returns {Promise<Object>} 5일 예보 데이터
+	 */
+	async getForecastByCity(cityName) {
+		// 더미 데이터 사용 설정이 활성화되어 있으면 더미 데이터 반환
+		if (USE_DUMMY_DATA) {
+			console.log(`[더미 데이터] ${cityName} 5일 예보 요청`);
+			return await this.getDummyForecastData(cityName);
+		}
+
+		try {
+			const response = await axios.get(
+				`${WEATHER_BASE_URL}/forecast?q=${cityName}&appid=${WEATHER_API_KEY}&units=${apiConfig.WEATHER.UNITS}`
+			);
+			return response.data;
+		} catch (error) {
+			console.error("도시명으로 5일 예보를 가져오는 중 오류:", error);
+			throw error;
+		}
+	}
+
+	/**
+	 * 좌표로 5일 예보를 가져옵니다.
+	 * @param {number} lat - 위도
+	 * @param {number} lon - 경도
+	 * @returns {Promise<Object>} 5일 예보 데이터
+	 */
+	async getForecastByCoords(lat, lon) {
+		// 더미 데이터 사용 설정이 활성화되어 있으면 더미 데이터 반환
+		if (USE_DUMMY_DATA) {
+			console.log(`[더미 데이터] 좌표 (${lat}, ${lon}) 5일 예보 요청`);
+			// 좌표에 가장 가까운 도시의 더미 데이터 반환 (간단히 서울로 처리)
+			return await this.getDummyForecastData("Seoul");
+		}
+
+		try {
+			const response = await axios.get(
+				`${WEATHER_BASE_URL}/forecast?lat=${lat}&lon=${lon}&appid=${WEATHER_API_KEY}&units=${apiConfig.WEATHER.UNITS}`
+			);
+			return response.data;
+		} catch (error) {
+			console.error("좌표로 5일 예보를 가져오는 중 오류:", error);
+			throw error;
+		}
+	}
+
+	/**
+	 * 더미 5일 예보 데이터를 반환하는 함수
+	 * @param {string} cityName - 도시명
+	 * @returns {Promise<Object>} 더미 5일 예보 데이터
+	 */
+	async getDummyForecastData(cityName) {
+		// 약간의 지연을 추가하여 실제 API 호출처럼 보이게 함
+		await new Promise(resolve => setTimeout(resolve, 100 + Math.random() * 200));
+		
+		// 도시명이 더미 데이터에 있으면 반환, 없으면 서울 데이터 반환
+		return DUMMY_FORECAST_DATA[cityName] || DUMMY_FORECAST_DATA["Seoul"];
 	}
 }
 

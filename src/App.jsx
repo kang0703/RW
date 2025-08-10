@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Helmet } from "@dr.pogodin/react-helmet";
 import EventInfo from "./components/EventInfo";
+import Forecast from "./components/Forecast";
 import weatherService from "./services/weatherService";
 import { 
 	getWeatherIcon, 
@@ -12,12 +13,9 @@ import {
 } from "./utils/weatherUtils.jsx";
 import "./styles/main.scss";
 
-
-
-
-
 function App() {
 	const [weather, setWeather] = useState(null);
+	const [forecast, setForecast] = useState(null);
 	const [currentCity, setCurrentCity] = useState("서울");
 	const [loading, setLoading] = useState(true);
 	const [locationError, setLocationError] = useState(false);
@@ -30,6 +28,11 @@ function App() {
 			const weatherData = await weatherService.getCurrentLocationWeather();
 			setWeather(weatherData);
 			setCurrentCity(weatherData.name);
+			
+			// 5일 예보도 함께 가져오기
+			const forecastData = await weatherService.getForecastByCity(weatherData.name);
+			setForecast(forecastData);
+			
 			setLoading(false);
 		} catch (error) {
 			console.error("위치 정보를 가져올 수 없습니다:", error);
@@ -39,23 +42,23 @@ function App() {
 		}
 	};
 
-
-
-
-
 	// 도시명으로 날씨 가져오기
 	const getWeatherByCity = async (cityName) => {
 		try {
 			const weatherData = await weatherService.getWeatherByCity(cityName);
 			setWeather(weatherData);
 			setCurrentCity(weatherData.name);
+			
+			// 5일 예보도 함께 가져오기
+			const forecastData = await weatherService.getForecastByCity(cityName);
+			setForecast(forecastData);
+			
 			setLoading(false);
 		} catch (error) {
 			console.error("날씨 정보를 가져올 수 없습니다:", error);
 			setLoading(false);
 		}
 	};
-
 
 
 	useEffect(() => {
@@ -138,6 +141,11 @@ function App() {
 							<p>{weather.wind?.speed || 0} km/h</p>
 						</div>
 					</div>
+
+					{/* 5일 예보 */}
+					{forecast && (
+						<Forecast forecastData={forecast} />
+					)}
 				</div>
 			)}
 

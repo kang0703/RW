@@ -1,28 +1,26 @@
 import { useEffect, useState } from "react";
 import { Helmet } from "@dr.pogodin/react-helmet";
-import EventInfo from "../components/EventInfo";
-import weatherService from "../services/weatherService";
-import "../styles/main.scss";
+import EventInfo from "../../components/EventInfo";
+import Forecast from "../../components/Forecast";
+import weatherService from "../../services/weatherService";
+import "../../styles/main.scss";
 
 const cities = ["Jeonju","Iksan","Gunsan","Jeongeup","Gimje","Namwon","Sunchang","Jangsu","Jinan","Muju"];
 
 function JeonbukWeather() {
-  const [weatherData, setWeatherData] = useState({});
+  const [weather, setWeather] = useState(null);
+  const [forecast, setForecast] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchWeather = async () => {
+    const fetchWeatherData = async () => {
       try {
-        const weatherArray = await weatherService.getWeatherForMultipleCities(cities);
-        const weatherMap = {};
-        
-        weatherArray.forEach((weather, index) => {
-          if (weather) {
-            weatherMap[cities[index]] = weather;
-          }
-        });
-
-        setWeatherData(weatherMap);
+        const [weatherData, forecastData] = await Promise.all([
+          weatherService.getWeatherByCity("Daejeon"),
+          weatherService.getForecastByCity("Daejeon")
+        ]);
+        setWeather(weatherData);
+        setForecast(forecastData);
         setLoading(false);
       } catch (error) {
         console.error("날씨 데이터를 가져오는 중 오류 발생:", error);
@@ -30,7 +28,7 @@ function JeonbukWeather() {
       }
     };
 
-    fetchWeather();
+    fetchWeatherData();
   }, []);
 
   return (
@@ -78,6 +76,9 @@ function JeonbukWeather() {
             })}
           </div>
         )}
+
+        {/* 5일 예보 컴포넌트 추가 */}
+        {forecast && <Forecast forecastData={forecast} />}
 
         {/* 행사정보 컴포넌트 추가 */}
         <EventInfo regionName="전라북도" cityName="Jeonbuk" />

@@ -21,6 +21,7 @@
 @import 'components/event-info';
 @import 'components/all-events';
 @import 'components/event-map';
+@import 'components/forecast';
 @import 'components/footer';
 @import 'components/pages';
 
@@ -31,6 +32,8 @@
 
 html, body {
   height: 100%;
+  min-height: 100vh;
+  min-height: -webkit-fill-available; /* iOS Safari 대응 */
 }
 
 body {
@@ -38,6 +41,9 @@ body {
   padding: 0;
   font-family: $font-family;
   background: #ffffff;
+  /* 모바일에서 스크롤 시 배경색 유지 */
+  background-attachment: fixed;
+  background-size: cover;
 }
 
 // 스크롤바 스타일링
@@ -61,5 +67,8 @@ body {
 // 피그마 디자인 스타일
 .weather-app {
   min-height: 100vh;
+  min-height: -webkit-fill-available; /* iOS Safari 대응 */
   background: #ffffff;
+  /* 스크롤 시 배경색 유지 */
+  background-attachment: fixed;
 } 
