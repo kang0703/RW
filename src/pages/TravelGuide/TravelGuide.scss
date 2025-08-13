@@ -1,0 +1,482 @@
+.travel-guide {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+
+  .travel-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 3rem 2rem;
+    border-radius: 20px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+
+    h1 {
+      font-size: 3rem;
+      margin: 0 0 1rem 0;
+      font-weight: 700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin: 0;
+      opacity: 0.9;
+    }
+  }
+
+  // 계절별 추천 여행지
+  .seasonal-destinations {
+    margin-bottom: 4rem;
+
+    h2 {
+      font-size: 2.2rem;
+      color: #333;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .season-selector {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+
+      .season-btn {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        color: #495057;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 500;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: #e9ecef;
+          border-color: #adb5bd;
+          transform: translateY(-2px);
+        }
+
+        &.active {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          border-color: transparent;
+          box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+      }
+    }
+
+    .destinations-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+
+      .destination-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: 1px solid #e9ecef;
+
+        &:hover {
+          transform: translateY(-10px);
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .destination-image {
+          font-size: 4rem;
+          margin-bottom: 1rem;
+        }
+
+        h3 {
+          font-size: 1.5rem;
+          color: #333;
+          margin: 0 0 1rem 0;
+          font-weight: 600;
+        }
+
+        .description {
+          color: #666;
+          line-height: 1.6;
+          margin-bottom: 1rem;
+        }
+
+        .weather {
+          background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+          color: white;
+          padding: 0.5rem 1rem;
+          border-radius: 15px;
+          font-weight: 500;
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  // 지역별 관광지
+  .regional-attractions {
+    margin-bottom: 4rem;
+
+    h2 {
+      font-size: 2.2rem;
+      color: #333;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .region-selector {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+
+      .region-btn {
+        background: #f8f9fa;
+        border: 1px solid #e9ecef;
+        color: #495057;
+        padding: 0.6rem 1rem;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+
+        &:hover {
+          background: #e9ecef;
+          border-color: #adb5bd;
+        }
+
+        &.active {
+          background: #007bff;
+          color: white;
+          border-color: #007bff;
+        }
+      }
+    }
+
+    .attractions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+
+      .attraction-card {
+        background: white;
+        border-radius: 15px;
+        padding: 1.5rem;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: 1px solid #e9ecef;
+        display: flex;
+        gap: 1rem;
+
+        &:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .attraction-image {
+          font-size: 3rem;
+          flex-shrink: 0;
+        }
+
+        .attraction-info {
+          flex: 1;
+
+          h3 {
+            font-size: 1.3rem;
+            color: #333;
+            margin: 0 0 0.5rem 0;
+            font-weight: 600;
+          }
+
+          .category {
+            display: inline-block;
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+          }
+
+          .description {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+          }
+
+          .best-time {
+            color: #ff6b35;
+            font-weight: 500;
+            margin: 0;
+            font-size: 0.9rem;
+          }
+        }
+      }
+    }
+  }
+
+  // 날씨별 여행 팁
+  .weather-tips {
+    margin-bottom: 4rem;
+
+    h2 {
+      font-size: 2.2rem;
+      color: #333;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .tips-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+
+      .tip-card {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: 1px solid #e9ecef;
+
+        &:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        h3 {
+          font-size: 1.3rem;
+          color: #333;
+          margin: 0 0 1rem 0;
+          font-weight: 600;
+          text-align: center;
+        }
+
+        ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+
+          li {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+
+            &:before {
+              content: '✓';
+              position: absolute;
+              left: 0;
+              color: #28a745;
+              font-weight: bold;
+            }
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 여행 준비 체크리스트
+  .travel-checklist {
+    margin-bottom: 4rem;
+
+    h2 {
+      font-size: 2.2rem;
+      color: #333;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .checklist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+
+      .checklist-category {
+        background: white;
+        border-radius: 15px;
+        padding: 2rem;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e9ecef;
+
+        h3 {
+          font-size: 1.3rem;
+          color: #333;
+          margin: 0 0 1rem 0;
+          font-weight: 600;
+        }
+
+        ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+
+          li {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+
+            &:before {
+              content: '☐';
+              position: absolute;
+              left: 0;
+              color: #007bff;
+              font-weight: bold;
+            }
+
+            &:last-child {
+              margin-bottom: 0;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // 관련 페이지 링크
+  .related-links {
+    h2 {
+      font-size: 2.2rem;
+      color: #333;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .links-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+
+      .link-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 15px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+
+        &:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+          text-decoration: none;
+        }
+
+        h3 {
+          font-size: 1.3rem;
+          margin: 0 0 1rem 0;
+          font-weight: 600;
+        }
+
+        p {
+          margin: 0;
+          opacity: 0.9;
+          line-height: 1.5;
+        }
+      }
+    }
+  }
+}
+
+// 반응형 디자인
+@media (max-width: 768px) {
+  .travel-guide {
+    padding: 1rem;
+
+    .travel-header {
+      padding: 2rem 1rem;
+
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+    }
+
+    .seasonal-destinations,
+    .regional-attractions,
+    .weather-tips,
+    .travel-checklist {
+      h2 {
+        font-size: 1.8rem;
+      }
+    }
+
+    .season-selector {
+      .season-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    .destinations-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+
+      .destination-card {
+        padding: 1.5rem;
+      }
+    }
+
+    .attractions-grid {
+      grid-template-columns: 1fr;
+
+      .attraction-card {
+        flex-direction: column;
+        text-align: center;
+
+        .attraction-image {
+          margin-bottom: 1rem;
+        }
+      }
+    }
+
+    .tips-grid,
+    .checklist-grid,
+    .links-grid {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .travel-guide {
+    .travel-header {
+      h1 {
+        font-size: 2rem;
+      }
+    }
+
+    .season-selector {
+      .season-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+      }
+    }
+
+    .region-selector {
+      .region-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.8rem;
+      }
+    }
+  }
+}
