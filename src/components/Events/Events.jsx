@@ -70,7 +70,7 @@ const Events = ({ selectedCity }) => {
     const loadKakaoMap = () => {
       // 이미 로드되었는지 확인
       if (window.kakao && window.kakao.maps) {
-        console.log('카카오맵 API가 이미 로드되어 있습니다.');
+        console.log('🎉 카카오맵 API가 이미 로드되어 있습니다.');
         return;
       }
 
@@ -81,7 +81,7 @@ const Events = ({ selectedCity }) => {
         return;
       }
 
-      console.log('카카오맵 API 로드 시작...');
+      console.log('🗺️ 카카오맵 API 로드 시작...');
       
       const script = document.createElement('script');
       script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEYS.KAKAO_MAP}&libraries=services`;
@@ -89,13 +89,16 @@ const Events = ({ selectedCity }) => {
       script.defer = true;
       
       script.onload = () => {
-        console.log('🎉 카카오맵 API 로드 완료!');
-        // 카카오맵 초기화 확인
-        if (window.kakao && window.kakao.maps) {
-          console.log('카카오맵 객체 초기화 성공');
-        } else {
-          console.error('카카오맵 객체 초기화 실패');
-        }
+        console.log('🎉 카카오맵 API 스크립트 로드 완료!');
+        
+        // 카카오맵 초기화 대기
+        setTimeout(() => {
+          if (window.kakao && window.kakao.maps) {
+            console.log('✅ 카카오맵 객체 초기화 성공');
+          } else {
+            console.error('❌ 카카오맵 객체 초기화 실패');
+          }
+        }, 100);
       };
       
       script.onerror = (error) => {
@@ -106,18 +109,18 @@ const Events = ({ selectedCity }) => {
       // 스크립트를 head에 추가
       document.head.appendChild(script);
       
-      // 타임아웃 설정 (10초 후 실패 처리)
+      // 타임아웃 설정 (15초 후 실패 처리)
       setTimeout(() => {
         if (!window.kakao || !window.kakao.maps) {
           console.error('⏰ 카카오맵 API 로드 타임아웃');
           console.error('네트워크 연결과 API 키를 확인해주세요.');
         }
-      }, 10000);
+      }, 15000);
     };
 
     // API 설정 확인 후 로드
     if (API_SETTINGS.USE_KAKAO_MAP_API && API_KEYS.KAKAO_MAP) {
-      console.log('카카오맵 API 설정 확인됨, 로드 시작...');
+      console.log('🗺️ 카카오맵 API 설정 확인됨, 로드 시작...');
       loadKakaoMap();
     } else {
       console.warn('⚠️ 카카오맵 API가 비활성화되어 있거나 API 키가 없습니다.');
@@ -491,7 +494,10 @@ const Events = ({ selectedCity }) => {
                 <button 
                   className="map-btn"
                   onClick={() => openMapPopup(event.location)}
-                  disabled={!API_SETTINGS.USE_KAKAO_MAP_API}
+                  disabled={!API_SETTINGS.USE_KAKAO_MAP_API || !window.kakao || !window.kakao.maps}
+                  title={!API_SETTINGS.USE_KAKAO_MAP_API ? '카카오맵 API가 비활성화되어 있습니다' : 
+                         (!window.kakao || !window.kakao.maps) ? '지도 로딩 중입니다. 잠시 후 시도해주세요' : 
+                         '지도에서 위치 확인하기'}
                 >
                   🗺️ 지도보기
                 </button>
@@ -575,7 +581,7 @@ const Events = ({ selectedCity }) => {
       )}
 
       {/* 카카오맵 렌더링을 위한 useEffect */}
-      {mapPopup.isOpen && mapPopup.coordinates && (
+      {mapPopup.isOpen && mapPopup.coordinates && window.kakao && window.kakao.maps && (
         <KakaoMapRenderer 
           coordinates={mapPopup.coordinates}
           location={mapPopup.location}
@@ -590,6 +596,7 @@ const KakaoMapRenderer = ({ coordinates, location }) => {
   useEffect(() => {
     console.log('🗺️ 카카오맵 렌더링 시작:', coordinates, location);
     
+    // 카카오맵 API 상태 재확인
     if (!window.kakao || !window.kakao.maps) {
       console.error('❌ 카카오맵 API가 로드되지 않았습니다.');
       return;
@@ -600,42 +607,50 @@ const KakaoMapRenderer = ({ coordinates, location }) => {
       return;
     }
 
-    try {
+    // 지도 컨테이너가 준비될 때까지 대기
+    const waitForContainer = () => {
       const container = document.getElementById('kakao-map');
       if (!container) {
-        console.error('❌ 지도 컨테이너를 찾을 수 없습니다.');
+        console.log('⏳ 지도 컨테이너 대기 중...');
+        setTimeout(waitForContainer, 100);
         return;
       }
 
-      console.log('✅ 지도 컨테이너 발견, 지도 생성 시작...');
-      
-      const options = {
-        center: coordinates,
-        level: 3
-      };
+      try {
+        console.log('✅ 지도 컨테이너 발견, 지도 생성 시작...');
+        
+        const options = {
+          center: coordinates,
+          level: 3
+        };
 
-      const map = new window.kakao.maps.Map(container, options);
-      console.log('✅ 카카오맵 생성 완료');
+        const map = new window.kakao.maps.Map(container, options);
+        console.log('✅ 카카오맵 생성 완료');
 
-      // 마커 추가
-      const marker = new window.kakao.maps.Marker({
-        position: coordinates
-      });
+        // 마커 추가
+        const marker = new window.kakao.maps.Marker({
+          position: coordinates
+        });
 
-      marker.setMap(map);
-      console.log('✅ 마커 추가 완료');
+        marker.setMap(map);
+        console.log('✅ 마커 추가 완료');
 
-      // 인포윈도우 추가
-      const infowindow = new window.kakao.maps.InfoWindow({
-        content: `<div style="padding:5px;font-size:12px;text-align:center;"><strong>${location}</strong></div>`
-      });
+        // 인포윈도우 추가
+        const infowindow = new window.kakao.maps.InfoWindow({
+          content: `<div style="padding:5px;font-size:12px;text-align:center;"><strong>${location}</strong></div>`
+        });
 
-      infowindow.open(map, marker);
-      console.log('✅ 인포윈도우 추가 완료');
-      
-    } catch (error) {
-      console.error('❌ 카카오맵 렌더링 오류:', error);
-    }
+        infowindow.open(map, marker);
+        console.log('✅ 인포윈도우 추가 완료');
+        
+      } catch (error) {
+        console.error('❌ 카카오맵 렌더링 오류:', error);
+      }
+    };
+
+    // 컨테이너 준비 확인 시작
+    waitForContainer();
+    
   }, [coordinates, location]);
 
   return null;
