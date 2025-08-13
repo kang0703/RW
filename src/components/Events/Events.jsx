@@ -65,6 +65,184 @@ const Events = ({ selectedCity }) => {
     setMapPopup({ isOpen: false, location: '', coordinates: null });
   };
 
+  // 더미데이터 함수 (API 비활성화 시 사용)
+  const getFallbackEvents = (cityName) => {
+    // 도시명을 지역명으로 변환
+    const regionName = getRegionFromCity(cityName);
+    
+    const fallbackEvents = {
+      '서울특별시': [
+        {
+          id: 'seoul-1',
+          title: '서울 봄꽃 축제',
+          location: '서울특별시',
+          date: '2024년 4월',
+          description: '서울의 아름다운 봄꽃을 감상할 수 있는 축제입니다.',
+          category: '문화관광'
+        },
+        {
+          id: 'seoul-2',
+          title: '서울 한류 페스티벌',
+          location: '서울특별시',
+          date: '2024년 8월',
+          description: '한류 문화를 체험할 수 있는 대형 페스티벌입니다.',
+          category: '문화관광'
+        }
+      ],
+      '경기도': [
+        {
+          id: 'gyeonggi-1',
+          title: '경기도 꽃 축제',
+          location: '경기도',
+          date: '2024년 5월',
+          description: '경기도 전역에서 펼쳐지는 다양한 꽃 축제입니다.',
+          category: '문화관광'
+        },
+        {
+          id: 'gyeonggi-2',
+          title: '경기도 전통문화 축제',
+          location: '경기도',
+          date: '2024년 10월',
+          description: '경기도의 전통문화를 체험할 수 있는 축제입니다.',
+          category: '문화관광'
+        }
+      ],
+      '강원도': [
+        {
+          id: 'gangwon-1',
+          title: '강원도 겨울 축제',
+          location: '강원도',
+          date: '2024년 12월',
+          description: '강원도의 아름다운 겨울 풍경을 즐길 수 있는 축제입니다.',
+          category: '레저/스포츠'
+        },
+        {
+          id: 'gangwon-2',
+          title: '강원도 여름 피서 축제',
+          location: '강원도',
+          date: '2024년 7월',
+          description: '시원한 강원도에서 즐기는 여름 피서 축제입니다.',
+          category: '레저/스포츠'
+        }
+      ],
+      '부산광역시': [
+        {
+          id: 'busan-1',
+          title: '부산 해변 축제',
+          location: '부산광역시',
+          date: '2024년 7월',
+          description: '부산의 아름다운 해변에서 즐기는 여름 축제입니다.',
+          category: '레저/스포츠'
+        }
+      ],
+      '제주특별자치도': [
+        {
+          id: 'jeju-1',
+          title: '제주 한라산 등반 축제',
+          location: '제주특별자치도',
+          date: '2024년 6월',
+          description: '제주 한라산을 등반하며 즐기는 자연 축제입니다.',
+          category: '레저/스포츠'
+        }
+      ]
+    };
+    
+    // 지역별 더미데이터가 있으면 반환, 없으면 기본 데이터 반환
+    return fallbackEvents[regionName] || [
+      {
+        id: 'default-1',
+        title: '지역 축제 정보',
+        location: regionName,
+        date: '2024년',
+        description: `${regionName} 지역의 다양한 축제와 행사 정보를 확인해보세요.`,
+        category: '문화관광'
+      }
+    ];
+  };
+
+  // 도시명을 지역명으로 변환하는 함수
+  const getRegionFromCity = (cityName) => {
+    const cityToRegion = {
+      // 서울특별시
+      '서울': '서울특별시',
+      
+      // 부산광역시
+      '부산': '부산광역시',
+      
+      // 대구광역시
+      '대구': '대구광역시',
+      
+      // 인천광역시
+      '인천': '인천광역시',
+      
+      // 광주광역시
+      '광주': '광주광역시',
+      
+      // 대전광역시
+      '대전': '대전광역시',
+      
+      // 울산광역시
+      '울산': '울산광역시',
+      
+      // 세종특별자치시
+      '세종': '세종특별자치시',
+      
+      // 경기도
+      '수원': '경기도', '고양': '경기도', '용인': '경기도', '성남': '경기도', '부천': '경기도',
+      '안산': '경기도', '남양주': '경기도', '화성': '경기도', '평택': '경기도', '의정부': '경기도',
+      '파주': '경기도', '광명': '경기도', '이천': '경기도', '김포': '경기도', '군포': '경기도',
+      '하남': '경기도', '오산': '경기도', '안양': '경기도', '과천': '경기도', '의왕': '경기도',
+      '구리': '경기도', '동두천': '경기도', '양주': '경기도', '포천': '경기도', '여주': '경기도',
+      '연천': '경기도', '가평': '경기도', '양평': '경기도',
+      
+      // 강원도
+      '춘천': '강원도', '원주': '강원도', '강릉': '강원도', '동해': '강원도', '태백': '강원도',
+      '속초': '강원도', '삼척': '강원도', '홍천': '강원도', '횡성': '강원도', '영월': '강원도',
+      '평창': '강원도', '정선': '강원도', '철원': '강원도', '화천': '강원도', '양구': '강원도',
+      '인제': '강원도', '고성': '강원도', '양양': '강원도',
+      
+      // 충청북도
+      '청주': '충청북도', '충주': '충청북도', '제천': '충청북도', '음성': '충청북도', '진천': '충청북도',
+      '괴산': '충청북도', '증평': '충청북도', '단양': '충청북도', '보은': '충청북도', '옥천': '충청북도',
+      '영동': '충청북도', '금산': '충청북도',
+      
+      // 충청남도
+      '천안': '충청남도', '공주': '충청남도', '보령': '충청남도', '아산': '충청남도', '서산': '충청남도',
+      '논산': '충청남도', '계룡': '충청남도', '부여': '충청남도', '서천': '충청남도', '청양': '충청남도',
+      '홍성': '충청남도', '예산': '충청남도', '태안': '충청남도', '당진': '충청남도',
+      
+      // 전라북도
+      '전주': '전라북도', '군산': '전라북도', '익산': '전라북도', '정읍': '전라북도', '남원': '전라북도',
+      '김제': '전라북도', '완주': '전라북도', '진안': '전라북도', '무주': '전라북도', '장수': '전라북도',
+      '임실': '전라북도', '순창': '전라북도', '고창': '전라북도', '부안': '전라북도',
+      
+      // 전라남도
+      '목포': '전라남도', '여수': '전라남도', '순천': '전라남도', '나주': '전라남도', '광양': '전라남도',
+      '담양': '전라남도', '곡성': '전라남도', '구례': '전라남도', '고흥': '전라남도', '보성': '전라남도',
+      '화순': '전라남도', '장흥': '전라남도', '강진': '전라남도', '해남': '전라남도', '영암': '전라남도',
+      '무안': '전라남도', '함평': '전라남도', '영광': '전라남도', '장성': '전라남도', '완도': '전라남도',
+      '진도': '전라남도', '신안': '전라남도',
+      
+      // 경상북도
+      '포항': '경상북도', '경주': '경상북도', '김천': '경상북도', '안동': '경상북도', '구미': '경상북도',
+      '영주': '경상북도', '영천': '경상북도', '상주': '경상북도', '문경': '경상북도', '경산': '경상북도',
+      '의성': '경상북도', '청송': '경상북도', '영양': '경상북도', '영덕': '경상북도', '청도': '경상북도',
+      '고령': '경상북도', '성주': '경상북도', '칠곡': '경상북도', '예천': '경상북도', '봉화': '경상북도',
+      '울진': '경상북도', '울릉': '경상북도',
+      
+      // 경상남도
+      '창원': '경상남도', '진주': '경상남도', '통영': '경상남도', '사천': '경상남도', '김해': '경상남도',
+      '밀양': '경상남도', '거제': '경상남도', '양산': '경상남도', '의령': '경상남도', '함안': '경상남도',
+      '창녕': '경상남도', '고성': '경상남도', '남해': '경상남도', '하동': '경상남도', '산청': '경상남도',
+      '함양': '경상남도', '거창': '경상남도', '합천': '경상남도',
+      
+      // 제주특별자치도
+      '제주': '제주특별자치도', '서귀포': '제주특별자치도'
+    };
+    
+    return cityToRegion[cityName] || cityName;
+  };
+
   // 카카오맵 API 로드
   useEffect(() => {
     const loadKakaoMap = () => {
@@ -82,40 +260,71 @@ const Events = ({ selectedCity }) => {
       }
 
       console.log('🗺️ 카카오맵 API 로드 시작...');
+      console.log('API 키:', API_KEYS.KAKAO_MAP);
+      console.log('현재 도메인:', window.location.origin);
       
       const script = document.createElement('script');
-      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEYS.KAKAO_MAP}&libraries=services`;
+      script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEYS.KAKAO_MAP}&libraries=services&autoload=false`;
       script.async = true;
       script.defer = true;
       
       script.onload = () => {
         console.log('🎉 카카오맵 API 스크립트 로드 완료!');
         
-        // 카카오맵 초기화 대기
-        setTimeout(() => {
-          if (window.kakao && window.kakao.maps) {
+        // 카카오맵 초기화
+        if (window.kakao) {
+          window.kakao.maps.load(() => {
             console.log('✅ 카카오맵 객체 초기화 성공');
-          } else {
-            console.error('❌ 카카오맵 객체 초기화 실패');
-          }
-        }, 100);
+          });
+        } else {
+          console.error('❌ 카카오맵 객체 초기화 실패');
+        }
       };
       
       script.onerror = (error) => {
         console.error('❌ 카카오맵 API 스크립트 로드 실패:', error);
         console.error('API 키 확인 필요:', API_KEYS.KAKAO_MAP);
+        console.error('도메인 확인 필요:', window.location.origin);
+        console.error('HTTPS 환경 확인 필요:', window.location.protocol);
+        
+        // 대체 방법 시도
+        tryAlternativeKakaoMapLoad();
       };
       
       // 스크립트를 head에 추가
       document.head.appendChild(script);
       
-      // 타임아웃 설정 (15초 후 실패 처리)
+      // 타임아웃 설정 (10초 후 실패 처리)
       setTimeout(() => {
         if (!window.kakao || !window.kakao.maps) {
           console.error('⏰ 카카오맵 API 로드 타임아웃');
           console.error('네트워크 연결과 API 키를 확인해주세요.');
+          
+          // 대체 방법 시도
+          tryAlternativeKakaoMapLoad();
         }
-      }, 15000);
+      }, 10000);
+    };
+
+    // 대체 방법: 다른 방식으로 카카오맵 로드 시도
+    const tryAlternativeKakaoMapLoad = () => {
+      console.log('🔄 대체 방법으로 카카오맵 로드 시도...');
+      
+      // 방법 1: autoload=true로 시도
+      const script2 = document.createElement('script');
+      script2.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEYS.KAKAO_MAP}&libraries=services&autoload=true`;
+      script2.async = true;
+      
+      script2.onload = () => {
+        console.log('🎉 대체 방법으로 카카오맵 API 로드 성공!');
+      };
+      
+      script2.onerror = (error) => {
+        console.error('❌ 대체 방법도 실패:', error);
+        console.error('카카오맵 API 사용이 불가능합니다.');
+      };
+      
+      document.head.appendChild(script2);
     };
 
     // API 설정 확인 후 로드
@@ -145,28 +354,42 @@ const Events = ({ selectedCity }) => {
         return;
       }
 
-      console.log('공공데이터포털 API 호출 시작:', cityName);
+      console.log('공공데이터포털 API 호출 시작 - 전체 데이터 수집');
 
-      // 공공데이터포털 실제로 작동하는 API 엔드포인트들
+      // 공공데이터포털 실제로 작동하는 API 엔드포인트들 (더 많은 API 추가)
       const apiEndpoints = [
-        // 한국관광공사 축제정보 검색 API (실제로 작동하는 API)
+        // 한국관광공사 축제정보 검색 API
         'https://apis.data.go.kr/B551011/KorService2/searchFestival',
         // 한국관광공사 지역정보 검색 API
         'https://apis.data.go.kr/B551011/KorService2/areaCode',
         // 한국관광공사 관광지 검색 API
-        'https://apis.data.go.kr/B551011/KorService2/searchStay'
+        'https://apis.data.go.kr/B551011/KorService2/searchStay',
+        // 한국관광공사 숙박정보 검색 API
+        'https://apis.data.go.kr/B551011/KorService2/searchStay',
+        // 한국관광공사 음식점 검색 API
+        'https://apis.data.go.kr/B551011/KorService2/searchRestaurant',
+        // 한국관광공사 쇼핑 검색 API
+        'https://apis.data.go.kr/B551011/KorService2/searchShopping',
+        // 한국관광공사 문화시설 검색 API
+        'https://apis.data.go.kr/B551011/KorService2/searchCultural',
+        // 한국관광공사 레포츠 검색 API
+        'https://apis.data.go.kr/B551011/KorService2/searchLeports',
+        // 한국관광공사 행사정보 검색 API
+        'https://apis.data.go.kr/B551011/KorService2/searchEvent',
+        // 한국관광공사 여행코스 검색 API
+        'https://apis.data.go.kr/B551011/KorService2/searchCourse'
       ];
       
       let allEvents = [];
-      let workingEndpoint = null;
+      let workingEndpoints = [];
 
-      // 각 API 엔드포인트를 순차적으로 시도하여 행사 정보 수집
+      // 각 API 엔드포인트를 순차적으로 시도하여 모든 데이터 수집
       for (const endpoint of apiEndpoints) {
         try {
-          // 한국관광공사 API 파라미터 설정 (실제 API 스펙에 맞춤)
+          // 한국관광공사 API 파라미터 설정 (전체 데이터 수집)
           const params = new URLSearchParams({
             serviceKey: PUBLIC_DATA_API_KEY,
-            numOfRows: '20',
+            numOfRows: '100', // 더 많은 데이터 수집
             pageNo: '1',
             MobileOS: 'ETC',
             MobileApp: '갈래말래날씨여행',
@@ -190,59 +413,135 @@ const Events = ({ selectedCity }) => {
           if (response.ok) {
             const data = await response.json();
             console.log('API 응답 성공:', endpoint);
+            console.log('전체 API 응답 데이터:', data);
             
-            // 한국관광공사 API 응답 구조 분석 및 데이터 추출
+            // 한국관광공사 API 응답 구조 분석 및 데이터 추출 (더 포괄적으로)
             let records = [];
-            if (data && data.response && data.response.body && data.response.body.items) {
-              records = data.response.body.items.item || data.response.body.items;
-              console.log('response.body.items에서 데이터 발견:', records.length);
-            } else if (data && data.response && data.response.body && data.response.body.areaCode) {
-              records = data.response.body.areaCode.item || data.response.body.areaCode;
-              console.log('지역코드 데이터 발견:', records.length);
-            } else if (data && data.response && data.response.body && data.response.body.searchStay) {
-              records = data.response.body.searchStay.item || data.response.body.searchStay;
-              console.log('관광지 데이터 발견:', records.length);
-            } else {
-              console.log('API 응답 구조:', Object.keys(data || {}));
-              if (data && data.response) {
-                console.log('response 구조:', Object.keys(data.response));
-                if (data.response.body) {
-                  console.log('body 구조:', Object.keys(data.response.body));
-                }
+            
+            // 다양한 응답 구조 처리
+            if (data && data.response && data.response.body) {
+              const body = data.response.body;
+              
+              // items가 있는 경우
+              if (body.items) {
+                records = body.items.item || body.items;
+                console.log('response.body.items에서 데이터 발견:', records.length);
               }
-              continue; // 데이터가 없으면 다음 API 시도
+              // areaCode가 있는 경우
+              else if (body.areaCode) {
+                records = body.areaCode.item || body.areaCode;
+                console.log('지역코드 데이터 발견:', records.length);
+              }
+              // searchStay가 있는 경우
+              else if (body.searchStay) {
+                records = body.searchStay.item || body.searchStay;
+                console.log('관광지 데이터 발견:', records.length);
+              }
+              // searchFestival이 있는 경우
+              else if (body.searchFestival) {
+                records = body.searchFestival.item || body.searchFestival;
+                console.log('축제 데이터 발견:', records.length);
+              }
+              // searchRestaurant가 있는 경우
+              else if (body.searchRestaurant) {
+                records = body.searchRestaurant.item || body.searchRestaurant;
+                console.log('음식점 데이터 발견:', records.length);
+              }
+              // searchShopping이 있는 경우
+              else if (body.searchShopping) {
+                records = body.searchShopping.item || body.searchShopping;
+                console.log('쇼핑 데이터 발견:', records.length);
+              }
+              // searchCultural이 있는 경우
+              else if (body.searchCultural) {
+                records = body.searchCultural.item || body.searchCultural;
+                console.log('문화시설 데이터 발견:', records.length);
+              }
+              // searchLeports가 있는 경우
+              else if (body.searchLeports) {
+                records = body.searchLeports.item || body.searchLeports;
+                console.log('레포츠 데이터 발견:', records.length);
+              }
+              // searchEvent가 있는 경우
+              else if (body.searchEvent) {
+                records = body.searchEvent.item || body.searchEvent;
+                console.log('행사 데이터 발견:', records.length);
+              }
+              // searchCourse가 있는 경우
+              else if (body.searchCourse) {
+                records = body.searchCourse.item || body.searchCourse;
+                console.log('여행코스 데이터 발견:', records.length);
+              }
+              // 기타 알 수 없는 구조인 경우
+              else {
+                console.log('API 응답 구조:', Object.keys(body));
+                // body의 모든 키에 대해 데이터 확인
+                Object.keys(body).forEach(key => {
+                  const value = body[key];
+                  if (value && typeof value === 'object') {
+                    if (value.item) {
+                      records = [...records, ...(Array.isArray(value.item) ? value.item : [value.item])];
+                      console.log(`${key}.item에서 데이터 발견:`, value.item.length || 1);
+                    } else if (Array.isArray(value)) {
+                      records = [...records, ...value];
+                      console.log(`${key}에서 배열 데이터 발견:`, value.length);
+                    }
+                  }
+                });
+              }
+              
+              if (records.length > 0) {
+                console.log('첫 번째 레코드 샘플:', records[0]);
+                console.log('레코드 구조 분석:', Object.keys(records[0] || {}));
+              }
             }
             
             if (records && records.length > 0) {
-              // 선택된 도시와 관련된 행사만 필터링
-              const cityEvents = records
-                .filter(event => {
-                  // 한국관광공사 API 필드명 사용
-                  const eventRegion = event.addr1 || event.addr2 || event.areaName || event.areaCode || '';
-                  if (!eventRegion) return false;
+              // 모든 데이터를 수집 (지역 구분 없이)
+              const processedEvents = records
+                .map(event => {
+                  // API별로 다른 필드명 처리
+                  const processedEvent = {
+                    // 기본 식별자
+                    contentId: event.contentId || event.contentid || event.id || event.content_id,
+                    title: event.title || event.eventstartdate || event.eventenddate || event.name || event.facltNm || '제목 없음',
+                    
+                    // 주소 정보
+                    addr1: event.addr1 || event.address || event.addr,
+                    addr2: event.addr2 || event.addrDetail || event.addr_detail,
+                    areaName: event.areaName || event.area || event.areaNm || event.area_name,
+                    areaCode: event.areaCode || event.areaCd || event.area_code,
+                    
+                    // 날짜 정보
+                    date: event.eventstartdate || event.eventenddate || event.eventStartDate || event.eventEndDate || 
+                          event.startDate || event.endDate || event.date || '날짜 정보 없음',
+                    
+                    // 설명 정보
+                    description: event.overview || event.description || event.content || event.detail || 
+                               event.intro || event.summary || event.detailInfo || '상세 정보 없음',
+                    
+                    // 카테고리 정보
+                    category: event.cat1 || event.cat2 || event.cat3 || event.category || event.cat || '관광정보',
+                    
+                    // 추가 정보들
+                    tel: event.tel || event.phone || event.telephone || '',
+                    homepage: event.homepage || event.url || event.website || '',
+                    imageUrl: event.imageUrl || event.image || event.img || event.firstimage || event.firstImage || '',
+                    
+                    // API 출처
+                    source: endpoint.split('/').pop(),
+                    
+                    // 기존 호환성을 위한 필드들
+                    id: event.contentId || event.contentid || event.id || Math.random().toString(),
+                    location: event.addr1 || event.addr2 || event.areaName || '위치 정보 없음'
+                  };
                   
-                  const cityNameLower = cityName.toLowerCase();
-                  const eventRegionLower = eventRegion.toString().toLowerCase();
-                  
-                  return eventRegionLower.includes(cityNameLower) || 
-                         cityNameLower.includes(eventRegionLower.split(' ')[0]) ||
-                         eventRegionLower.includes(cityNameLower.split(' ')[0]);
-                })
-                .map(event => ({
-                  id: event.contentId || event.contentid || event.id || Math.random().toString(),
-                  title: event.title || event.eventstartdate || event.eventenddate || '제목 없음',
-                  location: event.addr1 || event.addr2 || event.areaName || '위치 정보 없음',
-                  date: event.eventstartdate || event.eventenddate || event.eventstartdate + ' ~ ' + event.eventenddate || '날짜 정보 없음',
-                  description: event.overview || event.description || event.content || '상세 정보 없음',
-                  category: event.cat1 || event.cat2 || event.cat3 || '관광정보',
-                  source: endpoint.split('/').pop() // API 출처 표시
-                }));
+                  return processedEvent;
+                });
               
-              if (cityEvents.length > 0) {
-                allEvents = [...allEvents, ...cityEvents];
-                workingEndpoint = endpoint;
-                console.log(`${endpoint}에서 ${cityEvents.length}개 행사 발견`);
-              }
+              allEvents = [...allEvents, ...processedEvents];
+              workingEndpoints.push(endpoint);
+              console.log(`${endpoint}에서 ${processedEvents.length}개 데이터 발견`);
             }
           } else {
             console.log(`API 엔드포인트 실패: ${endpoint} - ${response.status} ${response.statusText}`);
@@ -265,110 +564,133 @@ const Events = ({ selectedCity }) => {
         .filter((event, index, self) => 
           index === self.findIndex(e => e.id === event.id)
         )
-        .slice(0, 15); // 최대 15개 표시
+        .slice(0, 50); // 최대 50개 표시
 
-      console.log('총 수집된 행사 수:', allEvents.length);
-      console.log('중복 제거 후 행사 수:', uniqueEvents.length);
+      console.log('총 수집된 데이터 수:', allEvents.length);
+      console.log('중복 제거 후 데이터 수:', uniqueEvents.length);
+      console.log('작동한 API 엔드포인트들:', workingEndpoints);
       
       if (uniqueEvents.length > 0) {
         setEvents(uniqueEvents);
         setError(null);
-        console.log('🎉 공공데이터포털 API에서 행사 정보를 성공적으로 가져왔습니다!');
-        console.log('사용된 엔드포인트:', workingEndpoint);
+        console.log('🎉 공공데이터포털 API에서 모든 데이터를 성공적으로 가져왔습니다!');
+        console.log('작동한 엔드포인트 수:', workingEndpoints.length);
       } else {
-        console.log('해당 지역의 행사 데이터를 찾을 수 없음, 대체 데이터 표시');
-        setEvents(getFallbackEvents(cityName));
+        console.log('API에서 데이터를 찾을 수 없음');
+        setEvents([]); // 빈 배열로 설정하여 "데이터가 없습니다" 메시지 표시
       }
     } catch (err) {
-      console.error('행사 정보 가져오기 오류:', err);
-      setError(`행사 정보를 가져올 수 없습니다: ${err.message}`);
-      // 에러 발생 시에도 대체 데이터 제공
-      setEvents(getFallbackEvents(cityName));
+      console.error('데이터 가져오기 오류:', err);
+      setError(`데이터를 가져올 수 없습니다: ${err.message}`);
+      setEvents([]); // 에러 발생 시에도 빈 배열로 설정
     } finally {
       setLoading(false);
     }
   };
 
-  // API 실패 시 대체 데이터 제공 (더미데이터)
-  const getFallbackEvents = (cityName) => {
-    const fallbackEvents = {
-      '서울': [
-        { id: '1', title: '서울 등불축제', location: '서울특별시', date: '2024년 연중', description: '서울의 아름다운 등불을 감상할 수 있는 축제', category: '축제' },
-        { id: '2', title: '서울 국제영화제', location: '서울특별시', date: '2024년 10월', description: '아시아 최대 규모의 영화제', category: '축제' },
-        { id: '3', title: '서울 봄꽃축제', location: '서울특별시', date: '2024년 3-4월', description: '여의도와 남산의 아름다운 봄꽃을 감상하는 축제', category: '축제' },
-        { id: '4', title: '서울 한류문화축제', location: '서울특별시', date: '2024년 8월', description: 'K-POP과 한류 문화를 체험하는 축제', category: '문화' },
-        { id: '5', title: '서울 디자인페어', location: '서울특별시', date: '2024년 11월', description: '국제 디자인 전시회', category: '전시' }
-      ],
-      '부산': [
-        { id: '6', title: '부산국제영화제', location: '부산광역시', date: '2024년 10월', description: '아시아 최고의 영화제', category: '축제' },
-        { id: '7', title: '부산 해운대 모래축제', location: '부산광역시', date: '2024년 7월', description: '해운대 해변에서 즐기는 모래 예술 축제', category: '축제' },
-        { id: '8', title: '부산 불꽃축제', location: '부산광역시', date: '2024년 10월', description: '부산항에서 펼쳐지는 화려한 불꽃쇼', category: '축제' },
-        { id: '9', title: '부산 국제공연예술제', location: '부산광역시', date: '2024년 9월', description: '세계적인 공연예술 축제', category: '공연' },
-        { id: '10', title: '부산 해양문화축제', location: '부산광역시', date: '2024년 6월', description: '부산의 해양문화를 체험하는 축제', category: '문화' }
-      ],
-      '제주': [
-        { id: '11', title: '제주 한라문화제', location: '제주특별자치도', date: '2024년 9월', description: '제주의 전통문화를 체험할 수 있는 축제', category: '문화' },
-        { id: '12', title: '제주 벚꽃축제', location: '제주특별자치도', date: '2024년 3-4월', description: '제주의 아름다운 벚꽃을 감상하는 축제', category: '축제' },
-        { id: '13', title: '제주 오렌지축제', location: '제주특별자치도', date: '2024년 11-12월', description: '제주 특산품 오렌지를 체험하는 축제', category: '축제' },
-        { id: '14', title: '제주 해녀문화축제', location: '제주특별자치도', date: '2024년 7월', description: '제주 해녀의 전통문화를 체험하는 축제', category: '문화' },
-        { id: '15', title: '제주 국제트레킹대회', location: '제주특별자치도', date: '2024년 5월', description: '제주 올레길을 걸으며 즐기는 트레킹 대회', category: '체험' }
-      ],
-      '경주': [
-        { id: '16', title: '경주 세계문화엑스포', location: '경상북도 경주시', date: '2024년 연중', description: '경주의 역사와 문화를 체험할 수 있는 엑스포', category: '문화' },
-        { id: '17', title: '경주 벚꽃축제', location: '경상북도 경주시', date: '2024년 3-4월', description: '경주 불국사와 첨성대의 아름다운 벚꽃', category: '축제' },
-        { id: '18', title: '경주 신라문화제', location: '경상북도 경주시', date: '2024년 10월', description: '신라의 전통문화를 재현하는 축제', category: '문화' },
-        { id: '19', title: '경주 국제마라톤대회', location: '경상북도 경주시', date: '2024년 4월', description: '경주의 아름다운 풍경을 보며 즐기는 마라톤', category: '체험' }
-      ],
-      '광주': [
-        { id: '20', title: '광주 비엔날레', location: '광주광역시', date: '2024년 9-11월', description: '국제 현대미술의 거대한 축제', category: '전시' },
-        { id: '21', title: '광주 김치축제', location: '광주광역시', date: '2024년 10월', description: '한국의 전통 김치 문화를 체험하는 축제', category: '문화' },
-        { id: '22', title: '광주 국제영화제', location: '광주광역시', date: '2024년 7월', description: '독립영화와 예술영화를 선보이는 영화제', category: '축제' },
-        { id: '23', title: '광주 전통공예축제', location: '광주광역시', date: '2024년 5월', description: '전통공예의 아름다움을 체험하는 축제', category: '문화' }
-      ],
-      '대구': [
-        { id: '24', title: '대구 치맥페스티벌', location: '대구광역시', date: '2024년 7월', description: '치킨과 맥주를 즐기는 대구의 대표 축제', category: '축제' },
-        { id: '25', title: '대구 국제뮤지컬페스티벌', location: '대구광역시', date: '2024년 8월', description: '세계적인 뮤지컬 공연을 감상하는 축제', category: '공연' },
-        { id: '26', title: '대구 국제가요제', location: '대구광역시', date: '2024년 9월', description: '한국 가요의 발전을 위한 국제 가요제', category: '공연' },
-        { id: '27', title: '대구 약령시 한방문화축제', location: '대구광역시', date: '2024년 6월', description: '전통 한방문화를 체험하는 축제', category: '문화' }
-      ],
-      '인천': [
-        { id: '28', title: '인천 펜타포트 락 페스티벌', location: '인천광역시', date: '2024년 8월', description: '아시아 최대 규모의 락 페스티벌', category: '축제' },
-        { id: '29', title: '인천 국제해양축제', location: '인천광역시', date: '2024년 7월', description: '인천의 해양문화를 체험하는 축제', category: '문화' },
-        { id: '30', title: '인천 아시아영화제', location: '인천광역시', date: '2024년 10월', description: '아시아 영화의 다양성을 보여주는 영화제', category: '축제' }
-      ],
-      '울산': [
-        { id: '31', title: '울산 태화강 대공원 벚꽃축제', location: '울산광역시', date: '2024년 3-4월', description: '울산 태화강의 아름다운 벚꽃을 감상하는 축제', category: '축제' },
-        { id: '32', title: '울산 국제공예비엔날레', location: '울산광역시', date: '2024년 9-11월', description: '국제 현대공예의 거대한 축제', category: '전시' }
-      ]
-    };
-
-    // 기본 대체 데이터
-    const defaultEvents = [
-      { id: 'default1', title: `${cityName} 지역 축제`, location: cityName, date: '2024년 연중', description: `${cityName} 지역의 다양한 축제와 행사를 확인해보세요`, category: '축제' },
-      { id: 'default2', title: `${cityName} 문화행사`, location: cityName, date: '2024년 연중', description: `${cityName}에서 진행되는 문화행사와 전시회를 찾아보세요`, category: '문화' }
-    ];
-
-    return fallbackEvents[cityName] || defaultEvents;
-  };
-
-  useEffect(() => {
-    if (selectedCity) {
-      fetchEvents(selectedCity);
-    }
-  }, [selectedCity]);
-
   // 행사 카테고리별 아이콘
   const getCategoryIcon = (category) => {
     const categoryMap = {
-      '축제': '🎉',
-      '전시': '🎨',
-      '공연': '🎭',
-      '체험': '🎯',
-      '교육': '📚',
-      '문화': '🏛️',
-      '기타': '🎪'
+      // 한국관광공사 API 카테고리별 아이콘
+      'A01': '🏛️', // 문화관광
+      'A02': '🎭', // 레저/스포츠
+      'A03': '🍽️', // 음식
+      'A04': '🛏️', // 숙박
+      'A05': '🛍️', // 쇼핑
+      'A06': '🚗', // 교통
+      'A07': '🏥', // 의료
+      'A08': '🏢', // 기타
+      
+      // 축제/행사 관련
+      '축제': '🎉', 'festival': '🎉',
+      '문화': '🏛️', 'culture': '🏛️',
+      '전시': '🎨', 'exhibition': '🎨',
+      '공연': '🎭', 'performance': '🎭',
+      '체험': '🎯', 'experience': '🎯',
+      '교육': '📚', 'education': '📚',
+      '관광': '🗺️', 'tourism': '🗺️',
+      '레저': '🏄', 'leisure': '🏄',
+      '스포츠': '⚽', 'sports': '⚽',
+      '음식': '🍽️', 'food': '🍽️',
+      '쇼핑': '🛍️', 'shopping': '🛍️',
+      '숙박': '🛏️', 'accommodation': '🛏️',
+      '교통': '🚗', 'transportation': '🚗',
+      '의료': '🏥', 'medical': '🏥',
+      '기타': '🎪', 'etc': '🎪'
     };
-    return categoryMap[category] || '🎪';
+    
+    // 카테고리 코드가 있으면 해당 아이콘, 없으면 텍스트 기반 아이콘
+    return categoryMap[category] || categoryMap[category?.substring(0, 3)] || '🎪';
+  };
+
+  // 카테고리명을 사용자 친화적으로 변환
+  const getCategoryName = (category) => {
+    const categoryNames = {
+      'A01': '문화관광',
+      'A02': '레저/스포츠',
+      'A03': '음식',
+      'A04': '숙박',
+      'A05': '쇼핑',
+      'A06': '교통',
+      'A07': '의료',
+      'A08': '기타',
+      'festival': '축제',
+      'culture': '문화',
+      'exhibition': '전시',
+      'performance': '공연',
+      'experience': '체험',
+      'education': '교육',
+      'tourism': '관광',
+      'leisure': '레저',
+      'sports': '스포츠',
+      'food': '음식',
+      'shopping': '쇼핑',
+      'accommodation': '숙박',
+      'transportation': '교통',
+      'medical': '의료',
+      'etc': '기타'
+    };
+    
+    return categoryNames[category] || category || '관광정보';
+  };
+
+  // 날짜 정보를 사용자 친화적으로 변환
+  const formatDate = (dateString) => {
+    if (!dateString) return '날짜 정보 없음';
+    
+    try {
+      // YYYYMMDD 형식인 경우
+      if (dateString.length === 8 && /^\d{8}$/.test(dateString)) {
+        const year = dateString.substring(0, 4);
+        const month = dateString.substring(4, 6);
+        const day = dateString.substring(6, 8);
+        return `${year}년 ${month}월 ${day}일`;
+      }
+      
+      // 이미 포맷된 문자열인 경우
+      if (dateString.includes('년') || dateString.includes('월')) {
+        return dateString;
+      }
+      
+      // 기타 형식
+      return dateString;
+    } catch (error) {
+      return dateString || '날짜 정보 없음';
+    }
+  };
+
+  // 위치 정보를 정리
+  const formatLocation = (addr1, addr2, areaName) => {
+    if (addr1 && addr2) {
+      return `${addr1} ${addr2}`;
+    } else if (addr1) {
+      return addr1;
+    } else if (addr2) {
+      return addr2;
+    } else if (areaName) {
+      return areaName;
+    }
+    return '위치 정보 없음';
   };
 
   if (!selectedCity) {
@@ -385,10 +707,17 @@ const Events = ({ selectedCity }) => {
   return (
     <div className="events">
       <div className="events-header">
-        <h3>🎪 {selectedCity} 행사 정보</h3>
+        <h3>🎉 공공데이터포털 정보</h3>
+        <div className="location-info">
+          <span className="selected-city">📍 {selectedCity}</span>
+          <span className="search-region">🔍 전국 관광/행사 정보</span>
+        </div>
         <div className="api-status">
           <span className={`status-indicator ${API_SETTINGS.USE_PUBLIC_DATA_API ? 'active' : 'inactive'}`}>
-            {API_SETTINGS.USE_PUBLIC_DATA_API ? '🟢 API 활성화' : '🔴 API 비활성화'}
+            {API_SETTINGS.USE_PUBLIC_DATA_API ? '🟢 공공데이터 API 활성화' : '🔴 공공데이터 API 비활성화'}
+          </span>
+          <span className={`status-indicator ${(window.kakao && window.kakao.maps) ? 'active' : 'inactive'}`}>
+            {(window.kakao && window.kakao.maps) ? '🟢 카카오맵 API 활성화' : '🔴 카카오맵 API 비활성화'}
           </span>
         </div>
         <button 
@@ -414,7 +743,7 @@ const Events = ({ selectedCity }) => {
             <h4>공공데이터 API 연결 오류</h4>
           </div>
           <p className="error-details">{error}</p>
-          <p className="error-note">공공데이터포털 API 연결에 문제가 있어 미리 준비된 행사 정보를 표시하고 있습니다.</p>
+          <p className="error-note">공공데이터포털 API 연결에 문제가 있습니다. 잠시 후 다시 시도해주세요.</p>
           <div className="error-actions">
             <button 
               className="retry-api-btn"
@@ -424,15 +753,6 @@ const Events = ({ selectedCity }) => {
               }}
             >
               🔄 API 재시도
-            </button>
-            <button 
-              className="use-fallback-btn"
-              onClick={() => {
-                setError(null);
-                setEvents(getFallbackEvents(selectedCity));
-              }}
-            >
-              📋 기본 정보 사용
             </button>
             <button 
               className="error-close-btn"
@@ -471,7 +791,7 @@ const Events = ({ selectedCity }) => {
             <div key={event.id} className="event-card">
               <div className="event-header">
                 <span className="event-category">
-                  {getCategoryIcon(event.category)} {event.category}
+                  {getCategoryIcon(event.category)} {getCategoryName(event.category)}
                 </span>
                 <h4 className="event-title">{event.title}</h4>
                 {event.source && (
@@ -482,10 +802,37 @@ const Events = ({ selectedCity }) => {
               </div>
               
               <div className="event-details">
-                <p className="event-location">📍 {event.location}</p>
-                <p className="event-date">📅 {event.date}</p>
+                <p className="event-location">📍 {formatLocation(event.addr1, event.addr2, event.areaName)}</p>
+                <p className="event-date">📅 {formatDate(event.date)}</p>
                 {event.description && (
                   <p className="event-description">{event.description}</p>
+                )}
+                
+                {/* 추가 정보 표시 */}
+                <div className="event-additional-info">
+                  {event.contentId && (
+                    <span className="event-id">🆔 ID: {event.contentId}</span>
+                  )}
+                  {event.areaCode && (
+                    <span className="event-area-code">🏷️ 지역코드: {event.areaCode}</span>
+                  )}
+                  {event.tel && (
+                    <span className="event-tel">📞 {event.tel}</span>
+                  )}
+                  {event.homepage && (
+                    <span className="event-homepage">
+                      🌐 <a href={event.homepage} target="_blank" rel="noopener noreferrer">홈페이지</a>
+                    </span>
+                  )}
+                </div>
+                
+                {/* 이미지가 있는 경우 표시 */}
+                {event.imageUrl && (
+                  <div className="event-image">
+                    <img src={event.imageUrl} alt={event.title} onError={(e) => {
+                      e.target.style.display = 'none';
+                    }} />
+                  </div>
                 )}
               </div>
 
@@ -493,7 +840,7 @@ const Events = ({ selectedCity }) => {
               <div className="event-actions">
                 <button 
                   className="map-btn"
-                  onClick={() => openMapPopup(event.location)}
+                  onClick={() => openMapPopup(formatLocation(event.addr1, event.addr2, event.areaName))}
                   disabled={!API_SETTINGS.USE_KAKAO_MAP_API || !window.kakao || !window.kakao.maps}
                   title={!API_SETTINGS.USE_KAKAO_MAP_API ? '카카오맵 API가 비활성화되어 있습니다' : 
                          (!window.kakao || !window.kakao.maps) ? '지도 로딩 중입니다. 잠시 후 시도해주세요' : 
@@ -504,34 +851,6 @@ const Events = ({ selectedCity }) => {
               </div>
             </div>
           ))}
-        </div>
-      )}
-
-      {/* API 에러가 있고 데이터가 없을 때 - API 실패로 인한 대체 데이터 표시 */}
-      {!loading && error && events.length === 0 && (
-        <div className="fallback-data">
-          <div className="fallback-header">
-            <span className="fallback-icon">📋</span>
-            <h4>기본 행사 정보</h4>
-          </div>
-          <p className="fallback-message">공공데이터 API 연결에 문제가 있어 미리 준비된 기본 행사 정보를 표시합니다.</p>
-          <div className="fallback-actions">
-            <button 
-              className="retry-api-btn"
-              onClick={() => {
-                setError(null);
-                fetchEvents(selectedCity);
-              }}
-            >
-              🔄 API 재시도
-            </button>
-            <button 
-              className="error-close-btn"
-              onClick={() => setError(null)}
-            >
-              ✕ 에러 메시지 닫기
-            </button>
-          </div>
         </div>
       )}
 
