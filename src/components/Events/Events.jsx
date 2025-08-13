@@ -10,30 +10,53 @@ const Events = ({ selectedCity }) => {
 
   // 카카오맵 팝업 열기
   const openMapPopup = (location) => {
+    console.log('🗺️ 지도 팝업 열기 시도:', location);
+    
     // 카카오맵 API가 로드되었는지 확인
-    if (window.kakao && window.kakao.maps) {
+    if (!window.kakao) {
+      console.error('❌ 카카오맵 API가 로드되지 않았습니다.');
+      alert('지도 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+      return;
+    }
+    
+    if (!window.kakao.maps) {
+      console.error('❌ 카카오맵 객체가 초기화되지 않았습니다.');
+      alert('지도 서비스 초기화에 실패했습니다. 페이지를 새로고침해주세요.');
+      return;
+    }
+
+    try {
       // 주소를 좌표로 변환
       const geocoder = new window.kakao.maps.services.Geocoder();
+      console.log('🔍 주소 검색 시작:', location);
+      
       geocoder.addressSearch(location, (result, status) => {
+        console.log('🔍 주소 검색 결과:', status, result);
+        
         if (status === window.kakao.maps.services.Status.OK) {
           const coords = new window.kakao.maps.LatLng(result[0].y, result[0].x);
+          console.log('✅ 좌표 변환 성공:', coords);
+          
           setMapPopup({
             isOpen: true,
             location: location,
             coordinates: coords
           });
         } else {
-          // 좌표 변환 실패 시 기본 좌표 사용
+          console.warn('⚠️ 좌표 변환 실패, 기본 좌표 사용:', status);
+          
+          // 기본 좌표 사용 (서울 시청 기준)
+          const defaultCoords = new window.kakao.maps.LatLng(37.5665, 126.9780);
           setMapPopup({
             isOpen: true,
             location: location,
-            coordinates: null
+            coordinates: defaultCoords
           });
         }
       });
-    } else {
-      // 카카오맵 API가 로드되지 않은 경우
-      alert('지도 서비스를 불러오는 중입니다. 잠시 후 다시 시도해주세요.');
+    } catch (error) {
+      console.error('❌ 지도 팝업 열기 오류:', error);
+      alert('지도를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
     }
   };
 
@@ -45,24 +68,61 @@ const Events = ({ selectedCity }) => {
   // 카카오맵 API 로드
   useEffect(() => {
     const loadKakaoMap = () => {
+      // 이미 로드되었는지 확인
       if (window.kakao && window.kakao.maps) {
-        return; // 이미 로드됨
+        console.log('카카오맵 API가 이미 로드되어 있습니다.');
+        return;
       }
 
+      // 기존 스크립트가 있는지 확인
+      const existingScript = document.querySelector('script[src*="kakao"]');
+      if (existingScript) {
+        console.log('카카오맵 스크립트가 이미 로드 중입니다.');
+        return;
+      }
+
+      console.log('카카오맵 API 로드 시작...');
+      
       const script = document.createElement('script');
       script.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${API_KEYS.KAKAO_MAP}&libraries=services`;
       script.async = true;
+      script.defer = true;
+      
       script.onload = () => {
-        console.log('카카오맵 API 로드 완료');
+        console.log('🎉 카카오맵 API 로드 완료!');
+        // 카카오맵 초기화 확인
+        if (window.kakao && window.kakao.maps) {
+          console.log('카카오맵 객체 초기화 성공');
+        } else {
+          console.error('카카오맵 객체 초기화 실패');
+        }
       };
-      script.onerror = () => {
-        console.error('카카오맵 API 로드 실패');
+      
+      script.onerror = (error) => {
+        console.error('❌ 카카오맵 API 스크립트 로드 실패:', error);
+        console.error('API 키 확인 필요:', API_KEYS.KAKAO_MAP);
       };
+      
+      // 스크립트를 head에 추가
       document.head.appendChild(script);
+      
+      // 타임아웃 설정 (10초 후 실패 처리)
+      setTimeout(() => {
+        if (!window.kakao || !window.kakao.maps) {
+          console.error('⏰ 카카오맵 API 로드 타임아웃');
+          console.error('네트워크 연결과 API 키를 확인해주세요.');
+        }
+      }, 10000);
     };
 
-    if (API_SETTINGS.USE_KAKAO_MAP_API) {
+    // API 설정 확인 후 로드
+    if (API_SETTINGS.USE_KAKAO_MAP_API && API_KEYS.KAKAO_MAP) {
+      console.log('카카오맵 API 설정 확인됨, 로드 시작...');
       loadKakaoMap();
+    } else {
+      console.warn('⚠️ 카카오맵 API가 비활성화되어 있거나 API 키가 없습니다.');
+      console.warn('API_SETTINGS.USE_KAKAO_MAP_API:', API_SETTINGS.USE_KAKAO_MAP_API);
+      console.warn('API_KEYS.KAKAO_MAP:', API_KEYS.KAKAO_MAP ? '설정됨' : '설정되지 않음');
     }
   }, []);
 
@@ -84,23 +144,23 @@ const Events = ({ selectedCity }) => {
 
       console.log('공공데이터포털 API 호출 시작:', cityName);
 
-      // 한국관광공사 API 엔드포인트들을 시도하여 API 연결
-      const endpoints = [
-        // 축제정보 검색 (주요 API)
-        PUBLIC_DATA_ENDPOINTS.FESTIVAL_SEARCH,
-        // 지역정보 검색
-        PUBLIC_DATA_ENDPOINTS.AREA_SEARCH,
-        // 관광지 검색
-        PUBLIC_DATA_ENDPOINTS.TOURIST_SPOT
+      // 공공데이터포털 실제로 작동하는 API 엔드포인트들
+      const apiEndpoints = [
+        // 한국관광공사 축제정보 검색 API (실제로 작동하는 API)
+        'https://apis.data.go.kr/B551011/KorService2/searchFestival',
+        // 한국관광공사 지역정보 검색 API
+        'https://apis.data.go.kr/B551011/KorService2/areaCode',
+        // 한국관광공사 관광지 검색 API
+        'https://apis.data.go.kr/B551011/KorService2/searchStay'
       ];
-
-      let response = null;
+      
+      let allEvents = [];
       let workingEndpoint = null;
 
-      // 각 엔드포인트를 순차적으로 시도
-      for (const endpoint of endpoints) {
+      // 각 API 엔드포인트를 순차적으로 시도하여 행사 정보 수집
+      for (const endpoint of apiEndpoints) {
         try {
-          // 한국관광공사 API 파라미터 설정
+          // 한국관광공사 API 파라미터 설정 (실제 API 스펙에 맞춤)
           const params = new URLSearchParams({
             serviceKey: PUBLIC_DATA_API_KEY,
             numOfRows: '20',
@@ -110,113 +170,110 @@ const Events = ({ selectedCity }) => {
             _type: 'json'
           });
           
-          const apiUrl = `${endpoint}?${params.toString()}`;
-          console.log('한국관광공사 API 엔드포인트 시도:', apiUrl);
+          const fullApiUrl = `${endpoint}?${params.toString()}`;
+          console.log('API 엔드포인트 시도:', endpoint);
           
-          // REST API 호출 시 적절한 헤더 설정
-          response = await fetch(apiUrl, {
+          // REST API 호출
+          const response = await fetch(fullApiUrl, {
             method: 'GET',
             headers: {
               'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'User-Agent': '갈래말래-날씨여행/1.0'
+              'Content-Type': 'application/json'
             }
           });
           
-          console.log('REST API 응답 상태:', response.status, response.statusText);
-          console.log('응답 헤더:', Object.fromEntries(response.headers.entries()));
+          console.log(`API 응답 상태: ${endpoint} - ${response.status} ${response.statusText}`);
           
           if (response.ok) {
-            workingEndpoint = endpoint;
-            console.log('작동하는 REST API 엔드포인트 발견:', endpoint);
-            break;
+            const data = await response.json();
+            console.log('API 응답 성공:', endpoint);
+            
+            // 한국관광공사 API 응답 구조 분석 및 데이터 추출
+            let records = [];
+            if (data && data.response && data.response.body && data.response.body.items) {
+              records = data.response.body.items.item || data.response.body.items;
+              console.log('response.body.items에서 데이터 발견:', records.length);
+            } else if (data && data.response && data.response.body && data.response.body.areaCode) {
+              records = data.response.body.areaCode.item || data.response.body.areaCode;
+              console.log('지역코드 데이터 발견:', records.length);
+            } else if (data && data.response && data.response.body && data.response.body.searchStay) {
+              records = data.response.body.searchStay.item || data.response.body.searchStay;
+              console.log('관광지 데이터 발견:', records.length);
+            } else {
+              console.log('API 응답 구조:', Object.keys(data || {}));
+              if (data && data.response) {
+                console.log('response 구조:', Object.keys(data.response));
+                if (data.response.body) {
+                  console.log('body 구조:', Object.keys(data.response.body));
+                }
+              }
+              continue; // 데이터가 없으면 다음 API 시도
+            }
+            
+            if (records && records.length > 0) {
+              // 선택된 도시와 관련된 행사만 필터링
+              const cityEvents = records
+                .filter(event => {
+                  // 한국관광공사 API 필드명 사용
+                  const eventRegion = event.addr1 || event.addr2 || event.areaName || event.areaCode || '';
+                  if (!eventRegion) return false;
+                  
+                  const cityNameLower = cityName.toLowerCase();
+                  const eventRegionLower = eventRegion.toString().toLowerCase();
+                  
+                  return eventRegionLower.includes(cityNameLower) || 
+                         cityNameLower.includes(eventRegionLower.split(' ')[0]) ||
+                         eventRegionLower.includes(cityNameLower.split(' ')[0]);
+                })
+                .map(event => ({
+                  id: event.contentId || event.contentid || event.id || Math.random().toString(),
+                  title: event.title || event.eventstartdate || event.eventenddate || '제목 없음',
+                  location: event.addr1 || event.addr2 || event.areaName || '위치 정보 없음',
+                  date: event.eventstartdate || event.eventenddate || event.eventstartdate + ' ~ ' + event.eventenddate || '날짜 정보 없음',
+                  description: event.overview || event.description || event.content || '상세 정보 없음',
+                  category: event.cat1 || event.cat2 || event.cat3 || '관광정보',
+                  source: endpoint.split('/').pop() // API 출처 표시
+                }));
+              
+              if (cityEvents.length > 0) {
+                allEvents = [...allEvents, ...cityEvents];
+                workingEndpoint = endpoint;
+                console.log(`${endpoint}에서 ${cityEvents.length}개 행사 발견`);
+              }
+            }
           } else {
-            console.log(`엔드포인트 ${endpoint} 응답 실패:`, response.status, response.statusText);
+            console.log(`API 엔드포인트 실패: ${endpoint} - ${response.status} ${response.statusText}`);
+            // 응답 내용 확인
+            try {
+              const errorData = await response.text();
+              console.log('에러 응답 내용:', errorData);
+            } catch (e) {
+              console.log('에러 응답 내용을 읽을 수 없음');
+            }
           }
         } catch (endpointError) {
-          console.log('REST API 엔드포인트 시도 실패:', endpoint, endpointError.message);
+          console.log(`API 엔드포인트 오류: ${endpoint} - ${endpointError.message}`);
           continue;
         }
       }
 
-      if (!response || !response.ok) {
-        console.error('모든 API 엔드포인트 시도 실패');
-        throw new Error('공공데이터포털 API 연결에 실패했습니다. 대체 데이터를 표시합니다.');
-      }
+      // 중복 제거 및 정렬
+      const uniqueEvents = allEvents
+        .filter((event, index, self) => 
+          index === self.findIndex(e => e.id === event.id)
+        )
+        .slice(0, 15); // 최대 15개 표시
 
-      const data = await response.json();
-      console.log('REST API 응답 데이터:', data);
+      console.log('총 수집된 행사 수:', allEvents.length);
+      console.log('중복 제거 후 행사 수:', uniqueEvents.length);
       
-      // 한국관광공사 API 응답 구조 분석 및 데이터 추출
-      let records = [];
-      if (data && data.response && data.response.body && data.response.body.items) {
-        records = data.response.body.items.item || data.response.body.items;
-        console.log('한국관광공사 API response.body.items에서 데이터 발견:', records.length);
-      } else if (data && data.response && data.response.body && data.response.body.areaCode) {
-        records = data.response.body.areaCode.item || data.response.body.areaCode;
-        console.log('한국관광공사 API 지역코드 데이터 발견:', records.length);
-      } else if (data && data.response && data.response.body && data.response.body.searchStay) {
-        records = data.response.body.searchStay.item || data.response.body.searchStay;
-        console.log('한국관광공사 API 관광지 데이터 발견:', records.length);
-      } else if (data && data.items) {
-        records = data.items.item || data.items;
-        console.log('items 필드에서 데이터 발견:', records.length);
-      } else if (Array.isArray(data)) {
-        records = data;
-        console.log('직접 배열 형태의 데이터 발견:', records.length);
+      if (uniqueEvents.length > 0) {
+        setEvents(uniqueEvents);
+        setError(null);
+        console.log('🎉 공공데이터포털 API에서 행사 정보를 성공적으로 가져왔습니다!');
+        console.log('사용된 엔드포인트:', workingEndpoint);
       } else {
-        console.log('한국관광공사 API 응답 구조:', Object.keys(data || {}));
-        if (data && data.response) {
-          console.log('response 구조:', Object.keys(data.response));
-          if (data.response.body) {
-            console.log('body 구조:', Object.keys(data.response.body));
-          }
-        }
-      }
-      
-      if (records && records.length > 0) {
-        console.log('총 행사 수:', records.length);
-        
-        // 선택된 도시와 관련된 행사만 필터링
-        const filteredEvents = records
-          .filter(event => {
-            // 한국관광공사 API 필드명 사용
-            const eventRegion = event.addr1 || event.addr2 || event.areaName || event.areaCode || '';
-            if (!eventRegion) return false;
-            
-            const cityNameLower = cityName.toLowerCase();
-            const eventRegionLower = eventRegion.toString().toLowerCase();
-            
-            // 더 정확한 매칭 로직
-            return eventRegionLower.includes(cityNameLower) || 
-                   cityNameLower.includes(eventRegionLower.split(' ')[0]) ||
-                   eventRegionLower.includes(cityNameLower.split(' ')[0]);
-          })
-          .slice(0, 10) // 최대 10개만 표시
-          .map(event => ({
-            id: event.contentId || event.contentid || event.id || Math.random().toString(),
-            title: event.title || event.eventstartdate || event.eventenddate || '제목 없음',
-            location: event.addr1 || event.addr2 || event.areaName || '위치 정보 없음',
-            date: event.eventstartdate || event.eventenddate || event.eventstartdate + ' ~ ' + event.eventenddate || '날짜 정보 없음',
-            description: event.overview || event.description || event.content || '상세 정보 없음',
-            category: event.cat1 || event.cat2 || event.cat3 || '관광정보'
-          }));
-
-        console.log('필터링된 행사 수:', filteredEvents.length);
-        
-        if (filteredEvents.length > 0) {
-          setEvents(filteredEvents);
-          setError(null); // 성공 시 에러 초기화
-          console.log('🎉 공공데이터포털 REST API에서 행사 정보를 성공적으로 가져왔습니다!');
-          console.log('사용된 엔드포인트:', workingEndpoint);
-          console.log('총 데이터 수:', records.length);
-          console.log('필터링된 행사 수:', filteredEvents.length);
-        } else {
-          console.log('해당 지역의 행사 데이터를 찾을 수 없음, 대체 데이터 표시');
-          setEvents(getFallbackEvents(cityName));
-        }
-      } else {
-        console.log('API에서 행사 데이터를 찾을 수 없음, 대체 데이터 표시');
+        console.log('해당 지역의 행사 데이터를 찾을 수 없음, 대체 데이터 표시');
         setEvents(getFallbackEvents(cityName));
       }
     } catch (err) {
@@ -349,25 +406,63 @@ const Events = ({ selectedCity }) => {
 
       {error && (
         <div className="error-message">
-          <p>⚠️ {error}</p>
+          <div className="error-header">
+            <span className="error-icon">🚨</span>
+            <h4>공공데이터 API 연결 오류</h4>
+          </div>
+          <p className="error-details">{error}</p>
           <p className="error-note">공공데이터포털 API 연결에 문제가 있어 미리 준비된 행사 정보를 표시하고 있습니다.</p>
-          <button 
-            onClick={() => setError(null)}
-            className="error-close-btn"
-          >
-            닫기
-          </button>
+          <div className="error-actions">
+            <button 
+              className="retry-api-btn"
+              onClick={() => {
+                setError(null);
+                fetchEvents(selectedCity);
+              }}
+            >
+              🔄 API 재시도
+            </button>
+            <button 
+              className="use-fallback-btn"
+              onClick={() => {
+                setError(null);
+                setEvents(getFallbackEvents(selectedCity));
+              }}
+            >
+              📋 기본 정보 사용
+            </button>
+            <button 
+              className="error-close-btn"
+              onClick={() => setError(null)}
+            >
+              ✕ 닫기
+            </button>
+          </div>
         </div>
       )}
 
-      {!loading && events.length === 0 && (
+      {/* API 에러가 없고 데이터가 없을 때 - 실제로 행사가 없는 경우 */}
+      {!loading && !error && events.length === 0 && (
         <div className="no-events">
-          <p>😔 해당 지역의 행사 정보가 없습니다.</p>
-          <p>다른 지역을 선택하거나 나중에 다시 시도해보세요.</p>
+          <div className="no-events-header">
+            <span className="no-events-icon">🔍</span>
+            <h4>행사 정보를 찾을 수 없습니다</h4>
+          </div>
+          <p className="no-events-message">😔 해당 지역의 행사 정보가 없습니다.</p>
+          <p className="no-events-note">다른 지역을 선택하거나 나중에 다시 시도해보세요.</p>
+          <div className="no-events-actions">
+            <button 
+              className="retry-api-btn"
+              onClick={() => fetchEvents(selectedCity)}
+            >
+              🔄 API 재시도
+            </button>
+          </div>
         </div>
       )}
 
-      {!loading && events.length > 0 && (
+      {/* API 에러가 없고 데이터가 있을 때 - 정상적으로 행사 정보 표시 */}
+      {!loading && !error && events.length > 0 && (
         <div className="events-list">
           {events.map((event) => (
             <div key={event.id} className="event-card">
@@ -376,6 +471,11 @@ const Events = ({ selectedCity }) => {
                   {getCategoryIcon(event.category)} {event.category}
                 </span>
                 <h4 className="event-title">{event.title}</h4>
+                {event.source && (
+                  <span className="event-source">
+                    📡 {event.source}
+                  </span>
+                )}
               </div>
               
               <div className="event-details">
@@ -401,6 +501,34 @@ const Events = ({ selectedCity }) => {
         </div>
       )}
 
+      {/* API 에러가 있고 데이터가 없을 때 - API 실패로 인한 대체 데이터 표시 */}
+      {!loading && error && events.length === 0 && (
+        <div className="fallback-data">
+          <div className="fallback-header">
+            <span className="fallback-icon">📋</span>
+            <h4>기본 행사 정보</h4>
+          </div>
+          <p className="fallback-message">공공데이터 API 연결에 문제가 있어 미리 준비된 기본 행사 정보를 표시합니다.</p>
+          <div className="fallback-actions">
+            <button 
+              className="retry-api-btn"
+              onClick={() => {
+                setError(null);
+                fetchEvents(selectedCity);
+              }}
+            >
+              🔄 API 재시도
+            </button>
+            <button 
+              className="error-close-btn"
+              onClick={() => setError(null)}
+            >
+              ✕ 에러 메시지 닫기
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* 카카오맵 팝업 */}
       {mapPopup.isOpen && (
         <div className="map-popup-overlay" onClick={closeMapPopup}>
@@ -422,9 +550,25 @@ const Events = ({ selectedCity }) => {
                 </div>
               ) : (
                 <div className="map-loading">
+                  <div className="loading-spinner">🗺️</div>
                   <p>지도를 불러오는 중...</p>
+                  <p className="map-loading-note">카카오맵 API 로드에 시간이 걸릴 수 있습니다.</p>
                 </div>
               )}
+              
+              {/* 카카오맵 API 상태 표시 */}
+              {!window.kakao || !window.kakao.maps ? (
+                <div className="map-api-status">
+                  <p className="status-warning">⚠️ 카카오맵 API가 로드되지 않았습니다.</p>
+                  <p className="status-note">지도 기능을 사용하려면 페이지를 새로고침해주세요.</p>
+                  <button 
+                    className="retry-btn"
+                    onClick={() => window.location.reload()}
+                  >
+                    🔄 페이지 새로고침
+                  </button>
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
@@ -444,30 +588,53 @@ const Events = ({ selectedCity }) => {
 // 카카오맵 렌더링 컴포넌트
 const KakaoMapRenderer = ({ coordinates, location }) => {
   useEffect(() => {
-    if (window.kakao && window.kakao.maps && coordinates) {
+    console.log('🗺️ 카카오맵 렌더링 시작:', coordinates, location);
+    
+    if (!window.kakao || !window.kakao.maps) {
+      console.error('❌ 카카오맵 API가 로드되지 않았습니다.');
+      return;
+    }
+    
+    if (!coordinates) {
+      console.error('❌ 좌표 정보가 없습니다.');
+      return;
+    }
+
+    try {
       const container = document.getElementById('kakao-map');
-      if (container) {
-        const options = {
-          center: coordinates,
-          level: 3
-        };
-
-        const map = new window.kakao.maps.Map(container, options);
-
-        // 마커 추가
-        const marker = new window.kakao.maps.Marker({
-          position: coordinates
-        });
-
-        marker.setMap(map);
-
-        // 인포윈도우 추가
-        const infowindow = new window.kakao.maps.InfoWindow({
-          content: `<div style="padding:5px;font-size:12px;">${location}</div>`
-        });
-
-        infowindow.open(map, marker);
+      if (!container) {
+        console.error('❌ 지도 컨테이너를 찾을 수 없습니다.');
+        return;
       }
+
+      console.log('✅ 지도 컨테이너 발견, 지도 생성 시작...');
+      
+      const options = {
+        center: coordinates,
+        level: 3
+      };
+
+      const map = new window.kakao.maps.Map(container, options);
+      console.log('✅ 카카오맵 생성 완료');
+
+      // 마커 추가
+      const marker = new window.kakao.maps.Marker({
+        position: coordinates
+      });
+
+      marker.setMap(map);
+      console.log('✅ 마커 추가 완료');
+
+      // 인포윈도우 추가
+      const infowindow = new window.kakao.maps.InfoWindow({
+        content: `<div style="padding:5px;font-size:12px;text-align:center;"><strong>${location}</strong></div>`
+      });
+
+      infowindow.open(map, marker);
+      console.log('✅ 인포윈도우 추가 완료');
+      
+    } catch (error) {
+      console.error('❌ 카카오맵 렌더링 오류:', error);
     }
   }, [coordinates, location]);
 
