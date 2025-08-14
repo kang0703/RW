@@ -218,6 +218,24 @@
   }
 }
 
+// API 알림 스타일
+.api-notice {
+  background: rgba(244, 67, 54, 0.1);
+  color: #f44336;
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  text-align: center;
+  border: 1px solid rgba(244, 67, 54, 0.2);
+}
+
+.weather-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
 @keyframes float {
   0%, 100% {
     transform: translateY(0px);

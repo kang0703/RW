@@ -262,6 +262,13 @@ const Weather = ({ city, coordinates }) => {
 
   return (
     <div className="weather">
+      {/* 간단한 API 상태 표시 */}
+      {!API_SETTINGS.USE_OPENWEATHER_API && (
+        <div className="api-notice">
+          <span>🔴 더미데이터 사용 중 (.env 파일에 API 키 설정 필요)</span>
+        </div>
+      )}
+      
       <div className="weather-current">
         <h2>{city || '현재 위치'}</h2>
         <div className="weather-main">
