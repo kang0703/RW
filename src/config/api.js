@@ -23,11 +23,12 @@ export const API_SETTINGS = {
   USE_OPENWEATHER_API: !!import.meta.env.VITE_OPENWEATHER_API_KEY
 };
 
-// API 키 상태 확인 함수
+// API 키 상태 확인 함수 (디버깅 강화)
 export const checkApiKeys = () => {
   const status = {
     openweather: {
       hasKey: !!API_KEYS.OPENWEATHER,
+      keyLength: API_KEYS.OPENWEATHER?.length || 0,
       source: '환경변수',
       status: API_SETTINGS.USE_OPENWEATHER_API ? '활성화' : '비활성화',
       environment: isDevelopment ? '개발환경' : '프로덕션',
@@ -35,6 +36,7 @@ export const checkApiKeys = () => {
     },
     publicData: {
       hasKey: !!API_KEYS.PUBLIC_DATA,
+      keyLength: API_KEYS.PUBLIC_DATA?.length || 0,
       source: '환경변수',
       status: API_SETTINGS.USE_PUBLIC_DATA_API ? '활성화' : '비활성화',
       environment: isDevelopment ? '개발환경' : '프로덕션',
@@ -42,7 +44,12 @@ export const checkApiKeys = () => {
     }
   };
   
+  // 환경변수 값 직접 확인 (디버깅용)
+  console.log('🔑 환경변수 직접 확인:');
+  console.log('VITE_PUBLIC_DATA_API_KEY:', import.meta.env.VITE_PUBLIC_DATA_API_KEY);
+  console.log('VITE_OPENWEATHER_API_KEY:', import.meta.env.VITE_OPENWEATHER_API_KEY);
   console.log('🔑 API 키 상태:', status);
+  
   return status;
 };
 

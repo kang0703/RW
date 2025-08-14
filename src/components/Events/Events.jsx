@@ -209,21 +209,23 @@ const Events = ({ selectedCity }) => {
       setError(null);
       setApiStatus('loading');
 
-      // API 사용 설정 확인
-      if (!API_SETTINGS.USE_PUBLIC_DATA_API) {
+      // API 키 확인 및 강제 API 시도 옵션
+      const hasApiKey = !!PUBLIC_DATA_API_KEY;
+      const shouldForceApi = hasApiKey && (API_SETTINGS.USE_PUBLIC_DATA_API || import.meta.env.PROD);
+      
+      console.log('🔍 API 호출 조건 확인:');
+      console.log('📍 선택된 도시:', cityName);
+      console.log('🔑 API 키 존재:', hasApiKey);
+      console.log('🔑 API 키 길이:', PUBLIC_DATA_API_KEY?.length || 0);
+      console.log('⚙️ API 설정:', API_SETTINGS.USE_PUBLIC_DATA_API);
+      console.log('🌍 환경:', import.meta.env.PROD ? '프로덕션' : '개발');
+      console.log('🚀 강제 API 시도:', shouldForceApi);
+
+      // API 키가 있으면 무조건 API 시도 (프로덕션 환경)
+      if (!shouldForceApi) {
         console.log('⚠️ API 사용 비활성화됨 - 더미데이터 사용');
         setEvents(getFallbackEvents(cityName));
         setApiStatus('fallback');
-        setLoading(false);
-        return;
-      }
-
-      // API 키 확인
-      if (!PUBLIC_DATA_API_KEY) {
-        console.log('❌ API 키가 없음 - 더미데이터 사용');
-        setEvents(getFallbackEvents(cityName));
-        setApiStatus('fallback');
-        setError('API 키가 설정되지 않아 더미데이터를 표시합니다.');
         setLoading(false);
         return;
       }
@@ -504,14 +506,19 @@ const Events = ({ selectedCity }) => {
   // 컴포넌트 마운트 시 더미데이터 표시
   useEffect(() => {
     if (selectedCity) {
-      // 먼저 더미데이터를 보여주고, 그 다음 API 시도
-      setEvents(getFallbackEvents(selectedCity));
-      setApiStatus('fallback');
+      // API 키 상태 확인
+      const apiStatus = checkApiKeys();
+      console.log('🚀 Events 컴포넌트 마운트 - API 상태:', apiStatus);
       
-      // 잠시 후 API 시도
-      setTimeout(() => {
+      // API 키가 있으면 즉시 API 시도, 없으면 더미데이터
+      if (apiStatus.publicData.hasKey) {
+        console.log('✅ API 키 발견 - 즉시 API 호출 시도');
         fetchEvents(selectedCity);
-      }, 1000);
+      } else {
+        console.log('⚠️ API 키 없음 - 더미데이터 표시');
+        setEvents(getFallbackEvents(selectedCity));
+        setApiStatus('fallback');
+      }
     }
   }, [selectedCity]);
 
