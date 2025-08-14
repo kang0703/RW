@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 데이터 수신 테스트</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        button { padding: 10px 15px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .result { margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 3px; white-space: pre-wrap; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .loading { background: #fff3cd; border: 1px solid #ffeaa7; color: #856404; }
+    </style>
+</head>
+<body>
+    <h1>🔍 API 데이터 수신 테스트</h1>
+    
+    <div class="test-section">
+        <h3>1. 기본 연결 테스트</h3>
+        <button onclick="testConnection()">연결 테스트</button>
+        <div id="connection-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. 공공데이터 API 호출 테스트</h3>
+        <button onclick="testPublicDataAPI()">공공데이터 API 테스트</button>
+        <div id="public-data-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>3. 실제 데이터 확인</h3>
+        <button onclick="checkRealData()">실제 데이터 확인</button>
+        <div id="real-data-result" class="result"></div>
+    </div>
+
+    <script>
+        const API_KEY = 'UxGu0qkZpzkbKj1TkyefegskQ9MNmCQf2gAnEc9yeHLuY6bpBT0CHXbEIu+YebmRqLeV4RoqzgpZbvuOYhnQuQ==';
+        
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.className = `result ${type}`;
+        }
+        
+        async function testConnection() {
+            showResult('connection-result', '🔄 연결 테스트 중...', 'loading');
+            
+            try {
+                // 가장 간단한 프록시 연결 테스트
+                const response = await fetch('/api/public-data/');
+                console.log('📡 연결 응답:', response.status, response.statusText);
+                
+                if (response.status === 404) {
+                    showResult('connection-result', '✅ 프록시 연결 성공!\n\n404 오류는 정상입니다 - 경로만 존재하고 실제 API는 호출되지 않음', 'success');
+                } else if (response.ok) {
+                    showResult('connection-result', '✅ 프록시 연결 성공!', 'success');
+                } else {
+                    showResult('connection-result', `⚠️ 프록시 응답: ${response.status} ${response.statusText}`, 'error');
+                }
+            } catch (error) {
+                console.error('❌ 연결 오류:', error);
+                showResult('connection-result', `❌ 연결 실패: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testPublicDataAPI() {
+            showResult('public-data-result', '🔄 공공데이터 API 테스트 중...', 'loading');
+            
+            try {
+                const url = `/api/public-data/B551011/KorService2/areaCode?serviceKey=${encodeURIComponent(API_KEY)}&_type=json&numOfRows=3&pageNo=1`;
+                console.log('🔗 API URL:', url);
+                
+                const response = await fetch(url);
+                console.log('📡 API 응답:', response.status, response.statusText);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('📊 받은 데이터:', data);
+                    
+                    if (data.response && data.response.body && data.response.body.items) {
+                        showResult('public-data-result', `✅ 데이터 수신 성공!\n\n받은 데이터:\n${JSON.stringify(data, null, 2)}`, 'success');
+                    } else {
+                        showResult('public-data-result', `⚠️ 데이터 구조 이상:\n${JSON.stringify(data, null, 2)}`, 'error');
+                    }
+                } else {
+                    showResult('public-data-result', `❌ API 오류: ${response.status} ${response.statusText}`, 'error');
+                }
+            } catch (error) {
+                console.error('❌ API 테스트 오류:', error);
+                showResult('public-data-result', `❌ API 테스트 실패: ${error.message}`, 'error');
+            }
+        }
+        
+        async function checkRealData() {
+            showResult('real-data-result', '🔄 실제 데이터 확인 중...', 'loading');
+            
+            try {
+                // 축제 정보 API 호출
+                const url = `/api/public-data/B551011/KorService2/searchFestival2?serviceKey=${encodeURIComponent(API_KEY)}&MobileOS=ETC&MobileApp=갈래말래날씨여행&_type=json&numOfRows=5&pageNo=1`;
+                console.log('🎉 축제 API URL:', url);
+                
+                const response = await fetch(url);
+                console.log('📡 축제 API 응답:', response.status, response.statusText);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('📊 축제 데이터:', data);
+                    
+                    if (data.response && data.response.body && data.response.body.items) {
+                        const items = data.response.body.items.item;
+                        const count = Array.isArray(items) ? items.length : 1;
+                        
+                        showResult('real-data-result', `✅ 축제 데이터 수신 성공!\n\n데이터 개수: ${count}개\n\n받은 데이터:\n${JSON.stringify(data, null, 2)}`, 'success');
+                    } else {
+                        showResult('real-data-result', `⚠️ 축제 데이터 구조 이상:\n${JSON.stringify(data, null, 2)}`, 'error');
+                    }
+                } else {
+                    showResult('real-data-result', `❌ 축제 API 오류: ${response.status} ${response.statusText}`, 'error');
+                }
+            } catch (error) {
+                console.error('❌ 실제 데이터 확인 오류:', error);
+                showResult('real-data-result', `❌ 실제 데이터 확인 실패: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

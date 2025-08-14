@@ -44,12 +44,6 @@ export const checkApiKeys = () => {
     }
   };
   
-  // 환경변수 값 직접 확인 (디버깅용)
-  console.log('🔑 환경변수 직접 확인:');
-  console.log('VITE_PUBLIC_DATA_API_KEY:', import.meta.env.VITE_PUBLIC_DATA_API_KEY);
-  console.log('VITE_OPENWEATHER_API_KEY:', import.meta.env.VITE_OPENWEATHER_API_KEY);
-  console.log('🔑 API 키 상태:', status);
-  
   return status;
 };
 
@@ -58,40 +52,53 @@ export const API_ENDPOINTS = {
   OPENWEATHER_BASE: 'https://api.openweathermap.org/data/2.5' // OpenWeatherMap
 };
 
-// 한국관광공사 관광정보 서비스 엔드포인트 (공식 문서 기준)
+// 공공데이터포털 관광정보 서비스 엔드포인트 (프록시를 통해 호출)
 export const PUBLIC_DATA_ENDPOINTS = {
-  // 기본 서비스 루트
-  KOREA_TOURISM: 'https://apis.data.go.kr/B551011/KorService2',
+  // 기본 서비스 루트 - 공공데이터포털 한국관광공사 API (프록시)
+  KOREA_TOURISM: '/api/public-data/B551011/KorService2',
   
   // 지역코드 관련 API
-  AREA_CODE: 'https://apis.data.go.kr/B551011/KorService2/areaCode',
-  AREA_CODE_DETAIL: 'https://apis.data.go.kr/B551011/KorService2/areaCode1',
+  AREA_CODE: '/api/public-data/B551011/KorService2/areaCode',
+  AREA_CODE_DETAIL: '/api/public-data/B551011/KorService2/areaCode1',
   
   // 축제/행사 관련 API (올바른 엔드포인트)
-  FESTIVAL_SEARCH: 'https://apis.data.go.kr/B551011/KorService2/searchFestival',
-  EVENT_SEARCH: 'https://apis.data.go.kr/B551011/KorService2/searchEvent',
+  FESTIVAL_SEARCH: '/api/public-data/B551011/KorService2/searchFestival2',
+  EVENT_SEARCH: '/api/public-data/B551011/KorService2/searchEvent',
   
   // 관광지 관련 API
-  TOURIST_SPOT: 'https://apis.data.go.kr/B551011/KorService2/searchStay',
-  ATTRACTION_SEARCH: 'https://apis.data.go.kr/B551011/KorService2/searchStay',
+  TOURIST_SPOT: '/api/public-data/B551011/KorService2/searchStay',
+  ATTRACTION_SEARCH: '/api/public-data/B551011/KorService2/searchStay',
   
   // 음식점 관련 API
-  RESTAURANT_SEARCH: 'https://apis.data.go.kr/B551011/KorService2/searchRestaurant',
+  RESTAURANT_SEARCH: '/api/public-data/B551011/KorService2/searchRestaurant',
   
   // 쇼핑 관련 API
-  SHOPPING_SEARCH: 'https://apis.data.go.kr/B551011/KorService2/searchShopping',
+  SHOPPING_SEARCH: '/api/public-data/B551011/KorService2/searchShopping',
   
   // 문화시설 관련 API
-  CULTURAL_SEARCH: 'https://apis.data.go.kr/B551011/KorService2/searchCultural',
+  CULTURAL_SEARCH: '/api/public-data/B551011/KorService2/searchCultural',
   
   // 레포츠 관련 API
-  LEISURE_SEARCH: 'https://apis.data.go.kr/B551011/KorService2/searchLeports',
+  LEISURE_SEARCH: '/api/public-data/B551011/KorService2/searchLeports',
   
   // 여행코스 관련 API
-  COURSE_SEARCH: 'https://apis.data.go.kr/B551011/KorService2/searchCourse',
+  COURSE_SEARCH: '/api/public-data/B551011/KorService2/searchCourse',
   
   // 숙박 관련 API
-  ACCOMMODATION_SEARCH: 'https://apis.data.go.kr/B551011/KorService2/searchStay'
+  ACCOMMODATION_SEARCH: '/api/public-data/B551011/KorService2/searchStay'
+};
+
+// 대안 API 엔드포인트들 (KorService1이 작동하지 않을 경우)
+export const ALTERNATIVE_ENDPOINTS = {
+  // 한국관광공사 대안 서비스
+  KOREA_TOURISM_ALT: '/api/public-data/B551011/KorService2',
+  FESTIVAL_SEARCH_ALT: '/api/public-data/B551011/KorService2/searchFestival',
+  
+  // 문화체육관광부 관광정보
+  CULTURE_TOURISM: '/api/public-data/B551011/CultureService',
+  
+  // 지역정보개발원 관광정보
+  LOCAL_TOURISM: '/api/public-data/B551011/LocalService'
 };
 
 // 한국관광공사 API 공통 파라미터
@@ -106,5 +113,5 @@ export const PUBLIC_DATA_PARAMS = {
   numOfRows: '20',    // 한 번에 가져올 데이터 수
   pageNo: '1',        // 페이지 번호
   listYN: 'Y',        // 목록 조회 여부
-  arrange: 'A'        // 정렬 (A: 제목순, B: 조회순, C: 수정일순, D: 거리순)
+  arrange: 'C'        // 정렬 (A: 제목순, B: 조회순, C: 수정일순, D: 거리순)
 };

@@ -1,85 +1,99 @@
 import { useState, useEffect } from 'react';
-import { API_KEYS, API_ENDPOINTS, API_SETTINGS } from '../../config/api';
+import { API_KEYS, API_ENDPOINTS, API_SETTINGS, checkApiKeys } from '../../config/api';
 import './Weather.scss';
 
-const Weather = ({ city, coordinates }) => {
+const Weather = ({ city, coordinates, isLocationSelected }) => {
   const [currentWeather, setCurrentWeather] = useState(null);
   const [forecast, setForecast] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [apiStatus, setApiStatus] = useState('idle');
+  const [cityName, setCityName] = useState(city || '서울특별시'); // 지역명 상태 추가
+  const [lastUpdated, setLastUpdated] = useState(null); // 마지막 업데이트 시간
 
-  useEffect(() => {
-    if (coordinates) {
+    useEffect(() => {
+    if (coordinates && coordinates.lat && coordinates.lon) {
+      console.log('🌤️ Weather: useEffect 실행됨', { coordinates, city });
       fetchWeatherData();
     }
-  }, [coordinates]);
-
-  // 더미 날씨 데이터 생성
-  const getDummyWeatherData = () => {
-    const dummyCurrent = {
-      main: {
-        temp: 22,
-        humidity: 65,
-        feels_like: 24
-      },
-      weather: [{ id: 800, description: '맑음' }],
-      wind: { speed: 3.2 },
-      name: city || '현재 위치'
-    };
-
-    const dummyForecast = {
-      list: [
-        { dt: Date.now() / 1000 + 86400, main: { temp: 23 }, weather: [{ id: 800, description: '맑음' }] },
-        { dt: Date.now() / 1000 + 172800, main: { temp: 25 }, weather: [{ id: 802, description: '구름 조금' }] },
-        { dt: Date.now() / 1000 + 259200, main: { temp: 20 }, weather: [{ id: 500, description: '비' }] },
-        { dt: Date.now() / 1000 + 345600, main: { temp: 18 }, weather: [{ id: 500, description: '비' }] },
-        { dt: Date.now() / 1000 + 432000, main: { temp: 22 }, weather: [{ id: 800, description: '맑음' }] }
-      ]
-    };
-
-    return { current: dummyCurrent, forecast: dummyForecast };
-  };
+  }, [coordinates?.lat, coordinates?.lon]); // 좌표만 변경될 때만 실행
 
   const fetchWeatherData = async () => {
     try {
+      console.log('🌤️ Weather: 날씨 데이터 요청 시작', { coordinates, city });
       setLoading(true);
+      setError(null);
+      
+      // API 키 상태 확인
+      const apiStatus = checkApiKeys();
+      console.log('🔑 Weather: API 키 상태:', apiStatus);
       
       // API 사용 설정 확인
       if (!API_SETTINGS.USE_OPENWEATHER_API) {
-        console.log('OpenWeather API 사용 비활성화됨 - 더미데이터 사용');
-        const dummyData = getDummyWeatherData();
-        setCurrentWeather(dummyData.current);
-        setForecast(dummyData.forecast);
+        const errorMsg = 'OpenWeather API 키가 설정되지 않아 날씨 정보를 가져올 수 없습니다.';
+        console.error('❌ Weather:', errorMsg);
+        setError(errorMsg);
+        setApiStatus('disabled');
         setLoading(false);
         return;
       }
-      
+
       // 현재 날씨 데이터 가져오기
-      const currentResponse = await fetch(
-        `${API_ENDPOINTS.OPENWEATHER_BASE}/weather?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${API_KEYS.OPENWEATHER}&units=metric&lang=kr`
-      );
+      const currentUrl = `${API_ENDPOINTS.OPENWEATHER_BASE}/weather?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${API_KEYS.OPENWEATHER}&units=metric&lang=kr`;
+      console.log('🌐 Weather: 현재 날씨 API 요청 URL:', currentUrl);
+      
+      const currentResponse = await fetch(currentUrl);
+      console.log('📡 Weather: 현재 날씨 API 응답 상태:', currentResponse.status);
       
       if (!currentResponse.ok) {
-        throw new Error('날씨 데이터를 가져올 수 없습니다.');
+        const errorText = await currentResponse.text();
+        console.error('❌ Weather: 현재 날씨 API 오류 응답:', errorText);
+        throw new Error(`날씨 데이터를 가져올 수 없습니다. (${currentResponse.status})`);
       }
       
       const currentData = await currentResponse.json();
+      console.log('✅ Weather: 현재 날씨 데이터 수신:', currentData);
+      
+      // OpenWeatherMap API 응답에서 지역명 추출
+      const extractedCityName = currentData.name || city || '알 수 없는 위치';
+      console.log('🏙️ Weather: 추출된 도시명:', extractedCityName);
+      
+      // 영문 도시명을 한국어로 변환
+      const koreanCityName = getKoreanCityName(extractedCityName);
+      console.log('🇰🇷 Weather: 한국어 도시명:', koreanCityName);
+      setCityName(koreanCityName);
       setCurrentWeather(currentData);
 
       // 5일 예보 데이터 가져오기
-      const forecastResponse = await fetch(
-        `${API_ENDPOINTS.OPENWEATHER_BASE}/forecast?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${API_KEYS.OPENWEATHER}&units=metric&lang=kr`
-      );
+      const forecastUrl = `${API_ENDPOINTS.OPENWEATHER_BASE}/forecast?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${API_KEYS.OPENWEATHER}&units=metric&lang=kr`;
+      console.log('🌐 Weather: 5일 예보 API 요청 URL:', forecastUrl);
+      
+      const forecastResponse = await fetch(forecastUrl);
+      console.log('📡 Weather: 5일 예보 API 응답 상태:', forecastResponse.status);
       
       if (!forecastResponse.ok) {
-        throw new Error('예보 데이터를 가져올 수 없습니다.');
+        const errorText = await forecastResponse.text();
+        console.error('❌ Weather: 5일 예보 API 오류 응답:', errorText);
+        throw new Error(`예보 데이터를 가져올 수 없습니다. (${forecastResponse.status})`);
       }
       
       const forecastData = await forecastResponse.json();
+      console.log('✅ Weather: 5일 예보 데이터 수신:', forecastData);
       setForecast(forecastData);
       
+      // 마지막 업데이트 시간 설정
+      setLastUpdated(new Date());
+      
+      setApiStatus('success');
+      console.log('🎉 Weather: 모든 날씨 데이터 로드 완료!');
+      
     } catch (err) {
+      console.error('❌ Weather: 날씨 데이터 가져오기 오류:', err);
       setError(err.message);
+      setApiStatus('error');
+      // 에러 시 상태 초기화
+      setCurrentWeather(null);
+      setForecast(null);
     } finally {
       setLoading(false);
     }
@@ -167,7 +181,7 @@ const Weather = ({ city, coordinates }) => {
       906: '🧊', // 우박
       
       // 추가 (Additional)
-      951: '🌤️', // 바람 없음
+      951: '💨', // 바람 없음
       952: '💨', // 가벼운 바람
       953: '💨', // 부드러운 바람
       954: '💨', // 적당한 바람
@@ -232,6 +246,319 @@ const Weather = ({ city, coordinates }) => {
     }
   };
 
+  // 영문 도시명을 한국어로 변환하는 함수 (개선된 버전)
+  const getKoreanCityName = (englishName) => {
+    
+    // "현재 위치" 텍스트인 경우 처리
+    if (englishName === '현재 위치') {
+      return '현재 위치';
+    }
+    
+    const cityNameMap = {
+      // 주요 도시
+      'Seoul': '서울',
+      'Busan': '부산',
+      'Daegu': '대구',
+      'Incheon': '인천',
+      'Gwangju': '광주',
+      'Daejeon': '대전',
+      'Ulsan': '울산',
+      'Sejong': '세종',
+      'Jeju': '제주',
+      
+      // 서울특별시 구별
+      'Gangnam-gu': '강남구',
+      'Seocho-gu': '서초구',
+      'Mapo-gu': '마포구',
+      'Yongsan-gu': '용산구',
+      'Jongno-gu': '종로구',
+      'Jung-gu': '중구',
+      'Seongbuk-gu': '성북구',
+      'Dongdaemun-gu': '동대문구',
+      'Gwangjin-gu': '광진구',
+      'Seongdong-gu': '성동구',
+      'Gangbuk-gu': '강북구',
+      'Dobong-gu': '도봉구',
+      'Nowon-gu': '노원구',
+      'Eunpyeong-gu': '은평구',
+      'Seodaemun-gu': '서대문구',
+      'Gangseo-gu': '강서구',
+      'Yangcheon-gu': '양천구',
+      'Guro-gu': '구로구',
+      'Geumcheon-gu': '금천구',
+      'Yeongdeungpo-gu': '영등포구',
+      'Dongjak-gu': '동작구',
+      'Gwanak-gu': '관악구',
+      'Songpa-gu': '송파구',
+      'Gangdong-gu': '강동구',
+      
+      // 서울특별시 동별 (구 단위로 변환)
+      "Sup'yŏng-dong": '서대문구',
+      "Sŏngbuk-dong": '성북구',
+      "Myŏngnyun-dong": '종로구',
+      "Ch'ŏngun-dong": '종로구',
+      "Sajik-dong": '종로구',
+      "Hyoja-dong": '종로구',
+      "Ch'ŏngun-dong": '종로구',
+      "Sŏngbuk-dong": '성북구',
+      "Anam-dong": '성북구',
+      "Tongin-dong": '종로구',
+      "Ch'ŏngun-dong": '종로구',
+      "Sajik-dong": '종로구',
+      "Hyoja-dong": '종로구',
+      "Ch'ŏngun-dong": '종로구',
+      "Sŏngbuk-dong": '성북구',
+      "Anam-dong": '성북구',
+      "Tongin-dong": '종로구',
+      
+      // 경기도 주요 도시
+      'Suwon': '수원',
+      'Goyang': '고양',
+      'Yongin': '용인',
+      'Seongnam': '성남',
+      'Bucheon': '부천',
+      'Ansan': '안산',
+      'Namyangju': '남양주',
+      'Hwaseong': '화성',
+      'Pyeongtaek': '평택',
+      'Uijeongbu': '의정부',
+      'Paju': '파주',
+      'Gwangmyeong': '광명',
+      'Icheon': '이천',
+      'Gimpo': '김포',
+      'Gunpo': '군포',
+      'Hanam': '하남',
+      'Osan': '오산',
+      'Anyang': '안양',
+      'Gwacheon': '과천',
+      'Uiwang': '의왕',
+      'Guri': '구리',
+      'Dongducheon': '동두천',
+      'Yangju': '양주',
+      'Pocheon': '포천',
+      'Yeoju': '여주',
+      'Yeoncheon': '연천',
+      'Gapyeong': '가평',
+      'Yangpyeong': '양평',
+      
+      // 강원도
+      'Chuncheon': '춘천',
+      'Wonju': '원주',
+      'Gangneung': '강릉',
+      'Donghae': '동해',
+      'Taebaek': '태백',
+      'Sokcho': '속초',
+      'Samcheok': '삼척',
+      'Hongcheon': '홍천',
+      'Hoengseong': '횡성',
+      'Yeongwol': '영월',
+      'Pyeongchang': '평창',
+      'Jeongseon': '정선',
+      'Cheorwon': '철원',
+      'Hwacheon': '화천',
+      'Yanggu': '양구',
+      'Inje': '인제',
+      'Goseong': '고성',
+      'Yangyang': '양양',
+      
+      // 충청북도
+      'Cheongju': '청주',
+      'Chungju': '충주',
+      'Jecheon': '제천',
+      'Eumseong': '음성',
+      'Jincheon': '진천',
+      'Goesan': '괴산',
+      'Jeungpyeong': '증평',
+      'Danyang': '단양',
+      'Boeun': '보은',
+      'Okcheon': '옥천',
+      'Yeongdong': '영동',
+      'Geumsan': '금산',
+      
+      // 충청남도
+      'Cheonan': '천안',
+      'Gongju': '공주',
+      'Boryeong': '보령',
+      'Asan': '아산',
+      'Seosan': '서산',
+      'Nonsan': '논산',
+      'Gyeryong': '계룡',
+      'Buyeo': '부여',
+      'Seocheon': '서천',
+      'Cheongyang': '청양',
+      'Hongseong': '홍성',
+      'Yesan': '예산',
+      'Taean': '태안',
+      'Dangjin': '당진',
+      
+      // 전라북도
+      'Jeonju': '전주',
+      'Gunsan': '군산',
+      'Iksan': '익산',
+      'Jeongeup': '정읍',
+      'Namwon': '남원',
+      'Gimje': '김제',
+      'Wanju': '완주',
+      'Jinan': '진안',
+      'Muju': '무주',
+      'Jangsu': '장수',
+      'Imsil': '임실',
+      'Sunchang': '순창',
+      'Gochang': '고창',
+      'Buan': '부안',
+      
+      // 전라남도
+      'Mokpo': '목포',
+      'Yeosu': '여수',
+      'Suncheon': '순천',
+      'Naju': '나주',
+      'Gwangyang': '광양',
+      'Damyang': '담양',
+      'Gokseong': '곡성',
+      'Gurye': '구례',
+      'Goheung': '고흥',
+      'Boseong': '보성',
+      'Hwasun': '화순',
+      'Jangheung': '장흥',
+      'Gangjin': '강진',
+      'Haenam': '해남',
+      'Yeongam': '영암',
+      'Muan': '무안',
+      'Hampyeong': '함평',
+      'Yeonggwang': '영광',
+      'Jangseong': '장성',
+      'Wando': '완도',
+      'Jindo': '진도',
+      'Sinan': '신안',
+      
+      // 경상북도
+      'Pohang': '포항',
+      'Gyeongju': '경주',
+      'Gimcheon': '김천',
+      'Andong': '안동',
+      'Gumi': '구미',
+      'Yeongju': '영주',
+      'Yeongcheon': '영천',
+      'Sangju': '상주',
+      'Mungyeong': '문경',
+      'Gyeongsan': '경산',
+      'Uiseong': '의성',
+      'Cheongsong': '청송',
+      'Yeongyang': '영양',
+      'Yeongdeok': '영덕',
+      'Cheongdo': '청도',
+      'Goryeong': '고령',
+      'Seongju': '성주',
+      'Chilgok': '칠곡',
+      'Yecheon': '예천',
+      'Bonghwa': '봉화',
+      'Uljin': '울진',
+      'Ulleung': '울릉',
+      
+      // 경상남도
+      'Changwon': '창원',
+      'Jinju': '진주',
+      'Tongyeong': '통영',
+      'Sacheon': '사천',
+      'Gimhae': '김해',
+      'Miryang': '밀양',
+      'Geoje': '거제',
+      'Yangsan': '양산',
+      'Uiryeong': '의령',
+      'Haman': '함안',
+      'Changnyeong': '창녕',
+      'Goseong': '고성',
+      'Namhae': '남해',
+      'Hadong': '하동',
+      'Sancheong': '산청',
+      'Hamyang': '함양',
+      'Geochang': '거창',
+      'Hapcheon': '합천',
+      
+      // 제주특별자치도
+      'Jeju City': '제주시',
+      'Seogwipo': '서귀포시'
+    };
+    
+    // 매핑된 한국어 도시명이 있으면 반환, 없으면 원본 반환
+    const result = cityNameMap[englishName] || englishName;
+    
+    // 디버깅을 위한 로그
+    if (result === englishName) {
+      console.log('⚠️ 도시명 변환 실패:', englishName);
+    } else {
+      console.log('✅ 도시명 변환 성공:', englishName, '→', result);
+    }
+    
+    return result;
+  };
+
+  // 5일 예보 데이터를 하루별로 그룹화하는 함수
+  const getDailyForecast = (list) => {
+    const dailyForecast = {};
+    
+    // 한국 시간대 기준으로 날짜 계산
+    list.forEach(item => {
+      // UTC 시간을 한국 시간으로 변환 (UTC+9)
+      const koreanTime = new Date(item.dt * 1000 + 9 * 60 * 60 * 1000);
+      const dateKey = koreanTime.toISOString().slice(0, 10); // YYYY-MM-DD
+      
+      if (!dailyForecast[dateKey]) {
+        dailyForecast[dateKey] = {
+          date: dateKey,
+          weatherId: item.weather[0].id,
+          maxTemp: item.main.temp,
+          minTemp: item.main.temp,
+          weatherDescription: item.weather[0].description,
+          humidity: item.main.humidity,
+          windSpeed: item.wind.speed,
+          pop: item.pop, // 강수 확률
+        };
+      } else {
+        // 같은 날짜의 데이터 중 최고/최저 온도 업데이트
+        dailyForecast[dateKey].maxTemp = Math.max(dailyForecast[dateKey].maxTemp, item.main.temp);
+        dailyForecast[dateKey].minTemp = Math.min(dailyForecast[dateKey].minTemp, item.main.temp);
+        
+        // 가장 자주 나타나는 날씨 상태를 대표로 사용
+        if (item.pop > dailyForecast[dateKey].pop) {
+          dailyForecast[dateKey].weatherId = item.weather[0].id;
+          dailyForecast[dateKey].weatherDescription = item.weather[0].description;
+          dailyForecast[dateKey].pop = item.pop;
+        }
+      }
+    });
+    
+    // 날짜순으로 정렬하고 최대 5일까지만 반환
+    const sortedForecast = Object.values(dailyForecast)
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .slice(0, 5);
+    
+    console.log('📅 5일 예보 데이터 처리 완료:', sortedForecast);
+    return sortedForecast;
+  };
+
+  // 날짜 형식을 원하는 형태로 변환하는 함수
+  const formatForecastDate = (dateString) => {
+    const date = new Date(dateString);
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    // 오늘인지 내일인지 확인
+    if (date.toDateString() === today.toDateString()) {
+      return '오늘';
+    } else if (date.toDateString() === tomorrow.toDateString()) {
+      return '내일';
+    } else {
+      // 요일과 날짜 표시
+      return date.toLocaleDateString('ko-KR', { 
+        month: 'short', 
+        day: 'numeric',
+        weekday: 'short'
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="weather weather--loading">
@@ -241,10 +568,10 @@ const Weather = ({ city, coordinates }) => {
     );
   }
 
-  if (error) {
+  if (error || !currentWeather) {
     return (
       <div className="weather weather--error">
-        <p>❌ {error}</p>
+        <p>❌ {error || '날씨 정보를 가져올 수 없습니다.'}</p>
         <button onClick={fetchWeatherData} className="retry-btn">
           다시 시도
         </button>
@@ -252,25 +579,36 @@ const Weather = ({ city, coordinates }) => {
     );
   }
 
-  if (!currentWeather) {
-    return (
-      <div className="weather">
-        <p>위치를 선택해주세요.</p>
-      </div>
-    );
-  }
-
   return (
     <div className="weather">
-      {/* 간단한 API 상태 표시 */}
-      {!API_SETTINGS.USE_OPENWEATHER_API && (
-        <div className="api-notice">
-          <span>🔴 더미데이터 사용 중 (.env 파일에 API 키 설정 필요)</span>
+      <div className="weather-header">
+        <div className="weather-location">
+          {!isLocationSelected && (
+            <span className="current-location-text">📍 현재 위치</span>
+          )}
+          <h2 className="city-name">
+            <span className="selected-city">📍 {cityName}</span>
+          </h2>
         </div>
-      )}
+        
+        {/* 마지막 업데이트 시간 및 새로고침 버튼 */}
+        <div className="weather-controls">
+          {lastUpdated && (
+            <div className="last-updated">
+              마지막 업데이트: {lastUpdated.toLocaleTimeString('ko-KR')}
+            </div>
+          )}
+          <button 
+            className="refresh-btn"
+            onClick={fetchWeatherData}
+            disabled={loading}
+          >
+            {loading ? '🔄 새로고침 중...' : '🔄 새로고침'}
+          </button>
+        </div>
+      </div>
       
       <div className="weather-current">
-        <h2>{city || '현재 위치'}</h2>
         <div className="weather-main">
           <div className="weather-icon">
             {getWeatherIcon(currentWeather.weather[0].id)}
@@ -310,25 +648,22 @@ const Weather = ({ city, coordinates }) => {
         <div className="weather-forecast">
           <h3>📅 5일 날씨 예보</h3>
           <div className="forecast-list">
-            {forecast.list
-              .filter((item, index) => index % 8 === 0) // 하루에 한 번씩만 표시
-              .slice(0, 5)
-              .map((item, index) => (
-                <div key={index} className="forecast-item">
-                  <div className="forecast-date">
-                    {new Date(item.dt * 1000).toLocaleDateString('ko-KR', {
-                      month: 'short',
-                      day: 'numeric'
-                    })}
-                  </div>
-                  <div className="forecast-icon">
-                    {getWeatherIcon(item.weather[0].id)}
-                  </div>
-                  <div className="forecast-temp">
-                    {Math.round(item.main.temp)}°C
-                  </div>
+            {getDailyForecast(forecast.list).map((dayForecast, index) => (
+              <div key={index} className="forecast-item">
+                <div className="forecast-date">
+                  {formatForecastDate(dayForecast.date)}
                 </div>
-              ))}
+                <div className="forecast-icon">
+                  {getWeatherIcon(dayForecast.weatherId)}
+                </div>
+                <div className="forecast-temp">
+                  {Math.round(dayForecast.maxTemp)}°C
+                </div>
+                <div className="forecast-min-temp">
+                  {Math.round(dayForecast.minTemp)}°C
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       )}

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 테스트</title>
+</head>
+<body>
+    <h1>공공데이터포털 API 테스트</h1>
+    
+    <div>
+        <h2>1. 기본 API 테스트 (areaCode)</h2>
+        <button onclick="testBasicAPI()">기본 API 테스트</button>
+        <div id="basic-result"></div>
+    </div>
+    
+    <div>
+        <h2>2. 축제 API 테스트 (searchFestival2)</h2>
+        <button onclick="testFestivalAPI()">축제 API 테스트</button>
+        <div id="festival-result"></div>
+    </div>
+    
+    <div>
+        <h2>3. 직접 API 호출 테스트</h2>
+        <button onclick="testDirectAPI()">직접 API 호출</button>
+        <div id="direct-result"></div>
+    </div>
+    
+    <div>
+        <h2>4. 프록시 연결 테스트</h2>
+        <button onclick="testProxyConnection()">프록시 연결 테스트</button>
+        <div id="proxy-result"></div>
+    </div>
+    
+    <div>
+        <h2>5. 간단한 GET 요청 테스트</h2>
+        <button onclick="testSimpleGet()">간단한 GET 요청</button>
+        <div id="simple-result"></div>
+    </div>
+
+    <script>
+        const API_KEY = 'UxGu0qkZpzkbKj1TkyefegskQ9MNmCQf2gAnEc9yeHLuY6bpBT0CHXbEIu+YebmRqLeV4RoqzgpZbvuOYhnQuQ==';
+        
+        async function testBasicAPI() {
+            const resultDiv = document.getElementById('basic-result');
+            resultDiv.innerHTML = '테스트 중...';
+            
+            try {
+                const url = `/api/public-data/B551011/KorService2/areaCode?serviceKey=${encodeURIComponent(API_KEY)}&_type=json&numOfRows=5&pageNo=1`;
+                console.log('🧪 테스트 URL:', url);
+                console.log('🔑 API 키 길이:', API_KEY.length);
+                console.log('🔑 API 키 (처음 20자):', API_KEY.substring(0, 20));
+                
+                const response = await fetch(url);
+                console.log('📡 응답 상태:', response.status);
+                console.log('📡 응답 상태 텍스트:', response.statusText);
+                console.log('📡 응답 헤더:', Object.fromEntries(response.headers.entries()));
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('📊 응답 데이터:', data);
+                    resultDiv.innerHTML = `<pre>✅ 성공: ${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    console.error('❌ HTTP 오류:', response.status, response.statusText);
+                    resultDiv.innerHTML = `<pre>❌ HTTP 오류: ${response.status} ${response.statusText}</pre>`;
+                }
+            } catch (error) {
+                console.error('❌ 네트워크/기타 오류:', error);
+                console.error('❌ 오류 타입:', error.constructor.name);
+                console.error('❌ 오류 스택:', error.stack);
+                resultDiv.innerHTML = `<pre>❌ 오류: ${error.message}\n\n타입: ${error.constructor.name}</pre>`;
+            }
+        }
+        
+        async function testFestivalAPI() {
+            const resultDiv = document.getElementById('festival-result');
+            resultDiv.innerHTML = '테스트 중...';
+            
+            try {
+                const url = `/api/public-data/B551011/KorService2/searchFestival2?serviceKey=${encodeURIComponent(API_KEY)}&MobileOS=ETC&MobileApp=갈래말래날씨여행&_type=json&numOfRows=5&pageNo=1`;
+                console.log('축제 API URL:', url);
+                
+                const response = await fetch(url);
+                console.log('축제 API 응답 상태:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('축제 API 응답 데이터:', data);
+                    resultDiv.innerHTML = `<pre>✅ 성공: ${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    resultDiv.innerHTML = `<pre>❌ 실패: ${response.status} ${response.statusText}</pre>`;
+                }
+            } catch (error) {
+                console.error('축제 API 오류:', error);
+                resultDiv.innerHTML = `<pre>❌ 오류: ${error.message}</pre>`;
+            }
+        }
+        
+        async function testDirectAPI() {
+            const resultDiv = document.getElementById('direct-result');
+            resultDiv.innerHTML = '테스트 중...';
+            
+            try {
+                const url = `https://apis.data.go.kr/B551011/KorService2/areaCode?serviceKey=${encodeURIComponent(API_KEY)}&_type=json&numOfRows=5&pageNo=1`;
+                console.log('🌐 직접 API URL:', url);
+                
+                const response = await fetch(url);
+                console.log('🌐 직접 API 응답 상태:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('🌐 직접 API 응답 데이터:', data);
+                    resultDiv.innerHTML = `<pre>✅ 성공: ${JSON.stringify(data, null, 2)}</pre>`;
+                } else {
+                    resultDiv.innerHTML = `<pre>❌ 실패: ${response.status} ${response.statusText}</pre>`;
+                }
+            } catch (error) {
+                console.error('🌐 직접 API 오류:', error);
+                resultDiv.innerHTML = `<pre>❌ 오류: ${error.message}</pre>`;
+            }
+        }
+        
+        async function testProxyConnection() {
+            const resultDiv = document.getElementById('proxy-result');
+            resultDiv.innerHTML = '테스트 중...';
+            
+            try {
+                // 프록시 경로가 존재하는지 테스트
+                const url = '/api/public-data/test';
+                console.log('🔗 프록시 연결 테스트 URL:', url);
+                
+                const response = await fetch(url);
+                console.log('🔗 프록시 응답 상태:', response.status);
+                console.log('🔗 프록시 응답 상태 텍스트:', response.statusText);
+                
+                if (response.status === 404) {
+                    resultDiv.innerHTML = `<pre>✅ 프록시 연결됨 (404는 정상 - 경로만 존재)</pre>`;
+                } else if (response.ok) {
+                    resultDiv.innerHTML = `<pre>✅ 프록시 연결됨 (200 응답)</pre>`;
+                } else {
+                    resultDiv.innerHTML = `<pre>⚠️ 프록시 응답: ${response.status} ${response.statusText}</pre>`;
+                }
+            } catch (error) {
+                console.error('🔗 프록시 연결 오류:', error);
+                resultDiv.innerHTML = `<pre>❌ 프록시 연결 실패: ${error.message}</pre>`;
+            }
+        }
+        
+        async function testSimpleGet() {
+            const resultDiv = document.getElementById('simple-result');
+            resultDiv.innerHTML = '테스트 중...';
+            
+            try {
+                // 가장 간단한 GET 요청 테스트
+                const url = '/api/public-data/';
+                console.log('🧪 간단한 GET 요청 URL:', url);
+                
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                console.log('🧪 간단한 GET 응답 상태:', response.status);
+                console.log('🧪 간단한 GET 응답 상태 텍스트:', response.statusText);
+                
+                resultDiv.innerHTML = `<pre>📡 응답: ${response.status} ${response.statusText}</pre>`;
+                
+            } catch (error) {
+                console.error('🧪 간단한 GET 오류:', error);
+                resultDiv.innerHTML = `<pre>❌ 오류: ${error.message}</pre>`;
+            }
+        }
+    </script>
+</body>
+</html>

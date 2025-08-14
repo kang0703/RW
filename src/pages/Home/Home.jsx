@@ -1,16 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Weather from '../../components/Weather/Weather';
 import Location from '../../components/Location/Location';
 import Events from '../../components/Events/Events';
 import './Home.scss';
 
 const Home = () => {
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [selectedCity, setSelectedCity] = useState('');
+  const [selectedLocation, setSelectedLocation] = useState(null); // 기본값 제거
+  const [selectedCity, setSelectedCity] = useState(''); // 기본값 제거
+  const [isLocationSelected, setIsLocationSelected] = useState(false); // 사용자가 위치를 선택했는지 여부
 
   const handleLocationSelect = (coordinates, city) => {
+    console.log('🏠 Home: 위치 선택됨', { coordinates, city });
+    
     setSelectedLocation(coordinates);
     setSelectedCity(city);
+    setIsLocationSelected(true); // 사용자가 위치를 선택했음을 표시
   };
 
   return (
@@ -29,7 +33,8 @@ const Home = () => {
           <div className="weather-section">
             <Weather 
               city={selectedCity} 
-              coordinates={selectedLocation} 
+              coordinates={selectedLocation}
+              isLocationSelected={isLocationSelected}
             />
           </div>
         </div>
@@ -70,7 +75,7 @@ const Home = () => {
           <div className="cta-buttons">
             <button 
               className="cta-primary"
-              onClick={() => document.querySelector('.search-input')?.focus()}
+              onClick={() => document.querySelector('.region-select')?.focus()}
             >
               🚀 시작하기
             </button>
