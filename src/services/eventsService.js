@@ -18,20 +18,10 @@ export const getNearbyEvents = async (lat, lon, radius = 10) => {
       const eventEndDate = `${currentYear}${currentMonth}31`;
       
       console.log('=== 한국관광공사 API 호출 시작 ===');
-      console.log('API 엔드포인트:', KOREA_TOURISM_API);
-      console.log('API 호출 파라미터:', {
-        serviceKey: API_KEYS.PUBLIC_DATA.substring(0, 20) + '...',
-        pageNo: 1,
-        numOfRows: 20,
-        MobileOS: 'ETC',
-        MobileApp: 'WeatherApp',
-        _type: 'json',
-        arrange: 'A',
-        eventStartDate,
-        eventEndDate
-      });
       
-      const response = await axios.get(KOREA_TOURISM_API, {
+      // 직접 한국관광공사 API 호출 (프록시 우회)
+      const directApiUrl = `${API_ENDPOINTS.PUBLIC_DATA}/searchFestival2`;
+      const response = await axios.get(directApiUrl, {
         params: {
           serviceKey: API_KEYS.PUBLIC_DATA,
           pageNo: 1,
@@ -39,9 +29,9 @@ export const getNearbyEvents = async (lat, lon, radius = 10) => {
           MobileOS: 'ETC',
           MobileApp: 'WeatherApp',
           _type: 'json',
-          arrange: 'A', // 제목순 정렬
-          eventStartDate: eventStartDate, // 이번 달 1일부터
-          eventEndDate: eventEndDate // 이번 달 마지막 날까지
+          arrange: 'A',
+          eventStartDate: eventStartDate,
+          eventEndDate: eventEndDate
         }
       });
       
@@ -84,10 +74,11 @@ export const getNearbyEvents = async (lat, lon, radius = 10) => {
       console.log('에러 메시지:', apiError.message);
       console.log('에러 상태:', apiError.response?.status);
       console.log('에러 응답:', apiError.response?.data);
-      console.log('에러 상세:', apiError);
+      
+      // API 에러가 발생해도 500 에러를 던지지 않고 가상 데이터로 대체
+      console.log('🔄 가상 데이터 사용으로 전환');
     }
     
-    console.log('🔄 가상 데이터 사용으로 전환');
     // API 실패시 가상 데이터 반환
     return await getMockEventsData(lat, lon);
   } catch (error) {
@@ -101,7 +92,8 @@ export const getEventsByLocation = async (location) => {
   try {
     // 한국관광공사 키워드 검색 API 호출 시도
     try {
-      const response = await axios.get(KOREA_TOURISM_SEARCH_API, {
+      const directApiUrl = `${API_ENDPOINTS.PUBLIC_DATA}/searchFestival2`;
+      const response = await axios.get(directApiUrl, {
         params: {
           serviceKey: API_KEYS.PUBLIC_DATA,
           pageNo: 1,
@@ -131,6 +123,7 @@ export const getEventsByLocation = async (location) => {
       }
     } catch (apiError) {
       console.log('한국관광공사 API 호출 실패, 가상 데이터 사용:', apiError.message);
+      // 에러 로깅만 하고 계속 진행
     }
     
     // API 실패시 가상 데이터 반환
