@@ -4,13 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
+    "dev": "vite",
     "dev:proxy": "vite --host 0.0.0.0 --mode development",
     "build": "vite build",
     "postbuild": "node scripts/copy-functions.js",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "scss:watch": "sass --watch src:src --style=expanded --source-map"
+    "scss:watch": "sass --watch src:src --style=compressed",
+    "functions:dev": "wrangler pages dev dist --local",
+    "functions:dev-full": "wrangler pages dev dist --compatibility-date=2024-01-01 --local",
+    "dev:all": "concurrently \"npm run dev\" \"npm run functions:dev\""
   },
   "dependencies": {
     "axios": "^1.6.0",
@@ -22,6 +25,7 @@
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^5.0.0",
+    "concurrently": "^9.2.0",
     "eslint": "^9.33.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
