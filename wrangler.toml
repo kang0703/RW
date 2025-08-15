@@ -4,7 +4,9 @@ compatibility_date = "2024-12-01"
 # Pages Functions 설정
 [build]
 command = "npm run build"
-output_dir = "dist"
+
+# Pages 배포를 위한 필수 설정
+pages_build_output_dir = "dist"
 
 # Functions 디렉토리 지정
 [functions]
