@@ -1,9 +1,7 @@
 ---
 description: React + Vite + SCSS 날씨앱 개발 및 애드센스 승인을 위한 규칙
-globs: ["**/*.{js,jsx,ts,tsx,scss,css,html}"]
-alwaysApply: true
+alwaysApply: false
 ---
-
 # 갈래말래 날씨여행 - 날씨앱 개발 규칙
 
 ## 프로젝트 개요
