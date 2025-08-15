@@ -151,7 +151,7 @@ const Events = ({ selectedCity }) => {
       const currentYear = new Date().getFullYear();
               const startDate = `${currentYear}0101`;
         const endDate = `${currentYear}1231`;
-        const baseUrl = 'https://apis.data.go.kr/B551011/KorService2';
+        const baseUrl = '/api/public-data/B551011/KorService2';
       
 
       
