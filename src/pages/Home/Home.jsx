@@ -10,8 +10,6 @@ const Home = () => {
   const [isLocationSelected, setIsLocationSelected] = useState(false); // 사용자가 위치를 선택했는지 여부
 
   const handleLocationSelect = (coordinates, city) => {
-    console.log('🏠 Home: 위치 선택됨', { coordinates, city });
-    
     setSelectedLocation(coordinates);
     setSelectedCity(city);
     setIsLocationSelected(true); // 사용자가 위치를 선택했음을 표시

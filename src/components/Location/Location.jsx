@@ -276,8 +276,6 @@ const Location = ({ onLocationSelect }) => {
   // 좌표로 도시명을 가져오는 함수 (GPS 좌표 기반으로 가장 가까운 시/구 찾기)
   const getCityNameFromCoordinates = async (lat, lon) => {
     try {
-      console.log('📍 GPS 좌표로 도시명 찾기 시작:', { lat, lon });
-      
       // GPS 좌표로 가장 가까운 시/구 찾기
       let closestCity = null;
       let minDistance = Infinity;
@@ -295,13 +293,10 @@ const Location = ({ onLocationSelect }) => {
         });
       });
       
-      console.log('📍 가장 가까운 도시:', closestCity, '거리:', minDistance);
-      
       if (closestCity) {
         // 거리 계산 개선: 더 넓은 범위에서 도시 찾기 (약 50km까지)
         // 0.1도 ≈ 11km, 0.5도 ≈ 55km
         if (minDistance > 0.5) {
-          console.log('📍 거리가 너무 멀어서 OpenWeatherMap API 사용');
           // OpenWeatherMap API로 도시명 가져오기 (백업)
           if (API_KEYS.OPENWEATHER) {
             try {
@@ -323,14 +318,13 @@ const Location = ({ onLocationSelect }) => {
                 return koreanCityName;
               }
             } catch (apiError) {
-              console.error('OpenWeatherMap API 호출 실패:', apiError);
+              // API 호출 실패 시 무시
             }
           }
           return '현재 위치';
         }
         
         // 가장 가까운 도시 반환 (시/구 단위)
-        console.log('📍 GPS 기반 도시명 반환:', closestCity.name);
         return closestCity.name;
       }
       
@@ -355,7 +349,7 @@ const Location = ({ onLocationSelect }) => {
         }
       }
     } catch (error) {
-      console.error('도시명 가져오기 실패:', error);
+      // 에러 발생 시 무시
     }
     return '현재 위치';
   };
@@ -595,7 +589,6 @@ const Location = ({ onLocationSelect }) => {
     
     // 정확한 매칭 시도
     if (cityNameMap[englishName]) {
-      console.log('✅ 도시명 변환 성공:', englishName, '→', cityNameMap[englishName]);
       return cityNameMap[englishName];
     }
     
@@ -603,13 +596,11 @@ const Location = ({ onLocationSelect }) => {
     for (const [english, korean] of Object.entries(cityNameMap)) {
       if (englishName.toLowerCase().includes(english.toLowerCase()) || 
           english.toLowerCase().includes(englishName.toLowerCase())) {
-        console.log('✅ 도시명 부분 매칭 성공:', englishName, '→', korean);
         return korean;
       }
     }
     
-    // 매핑되지 않은 경우 원본 반환 (디버깅용)
-    console.log('⚠️ 도시명 변환 실패:', englishName);
+    // 매핑되지 않은 경우 원본 반환
     return englishName;
   };
 
@@ -625,27 +616,18 @@ const Location = ({ onLocationSelect }) => {
   };
 
   useEffect(() => {
-    console.log('📍 Location 컴포넌트 마운트됨');
     // 컴포넌트 마운트 시 자동으로 현재 위치 감지
     getCurrentLocation();
   }, []); // 빈 의존성 배열로 한 번만 실행
 
   // 현재 위치 가져오기 (개선된 버전)
   const getCurrentLocation = () => {
-    console.log('📍 getCurrentLocation 호출됨');
-    
     if (navigator.geolocation) {
-      console.log('📍 GPS 지원됨, 위치 요청 중...');
-      
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           try {
-            console.log('📍 GPS 위치 획득 성공:', position.coords);
-            console.log('📍 GPS 정확도:', position.coords.accuracy, '미터');
-            
             // GPS 정확도가 너무 낮으면 경고
             if (position.coords.accuracy > 1000) {
-              console.warn('⚠️ GPS 정확도가 낮습니다:', position.coords.accuracy, '미터');
               setError('GPS 정확도가 낮습니다. 더 정확한 위치를 위해 실외에서 다시 시도해주세요.');
             }
             
@@ -656,9 +638,7 @@ const Location = ({ onLocationSelect }) => {
             setCurrentLocation({ lat: latitude, lon: longitude });
             
             // 도시명 가져오기
-            console.log('📍 도시명 변환 요청 중...');
             const cityName = await getCityNameFromCoordinates(latitude, longitude);
-            console.log('📍 도시명 변환 완료:', cityName);
             
             // 지역명도 함께 찾기
             const regionName = findRegionByCity(cityName);
@@ -668,12 +648,8 @@ const Location = ({ onLocationSelect }) => {
             }
             
             // 상위 컴포넌트로 위치 정보 전달
-            console.log('📍 Home 컴포넌트로 위치 정보 전달:', { lat: latitude, lon: longitude, city: cityName });
             onLocationSelect({ lat: latitude, lon: longitude }, cityName);
-            
-            console.log('📍 현재 위치 감지 성공:', { lat: latitude, lon: longitude, city: cityName });
           } catch (error) {
-            console.error('❌ 현재 위치 처리 실패:', error);
             setError('현재 위치를 처리할 수 없습니다. 수동으로 지역을 선택해주세요.');
             // 에러 시 서울로 기본 설정하지 않음
           } finally {
@@ -681,7 +657,6 @@ const Location = ({ onLocationSelect }) => {
           }
         },
         (error) => {
-          console.error('❌ 위치 정보를 가져올 수 없습니다:', error);
           setIsLoadingLocation(false);
           
           // GPS 에러별 상세 메시지
@@ -710,7 +685,6 @@ const Location = ({ onLocationSelect }) => {
         }
       );
     } else {
-      console.error('❌ 이 브라우저는 지오로케이션을 지원하지 않습니다.');
       setIsLoadingLocation(false);
       setError('이 브라우저는 위치 서비스를 지원하지 않습니다. 수동으로 지역을 선택해주세요.');
       // 지원하지 않는 경우 서울로 기본 설정하지 않음

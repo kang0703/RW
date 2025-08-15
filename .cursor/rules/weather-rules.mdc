@@ -13,7 +13,6 @@ alwaysApply: true
 
 ## API 정보
 - **OpenWeatherMap API**: 3a821b91dd99ce14a86001543d3bfe42
-- **카카오맵 API Key**: a4953cf58dc5cdca2dcdbb190de607e1
 - **공공데이터포털**: UxGu0qkZpzkbKj1TkyefegskQ9MNmCQf2gAnEc9yeHLuY6bpBT0CHXbEIu+YebmRqLeV4RoqzgpZbvuOYhnQuQ==
 	
 ## 메인 구조

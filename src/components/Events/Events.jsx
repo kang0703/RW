@@ -149,9 +149,9 @@ const Events = ({ selectedCity }) => {
       setLoading(true);
       
       const currentYear = new Date().getFullYear();
-      const startDate = `${currentYear}0101`;
-      const endDate = `${currentYear}1231`;
-      const baseUrl = '/api/public-data/B551011/KorService2';
+              const startDate = `${currentYear}0101`;
+        const endDate = `${currentYear}1231`;
+        const baseUrl = 'https://apis.data.go.kr/B551011/KorService2';
       
 
       
@@ -195,10 +195,10 @@ const Events = ({ selectedCity }) => {
             continue;
           }
           
-          const data = await response.json();
-
-          
-          const items = data.response?.body?.items?.item;
+                      const data = await response.json();
+            console.log(` ${endpoint.type} 응답 데이터:`, data); // 디버깅용
+            
+            const items = data.response?.body?.items?.item;
           
           if (items) {
             const events = Array.isArray(items) ? items : [items];
@@ -206,21 +206,23 @@ const Events = ({ selectedCity }) => {
             
             events.forEach(item => {
               if (item.addr1 && isInRegion(item.addr1, regionName)) {
-                // 공통 정보 처리
+                // 공통 정보 처리 - API 응답 구조에 맞게 수정
                 const eventData = {
-                  id: `${endpoint.type}_${item.contentId}`,
-                  title: item.title || item.eventTitle || item.culturalTitle || '제목 없음',
-                  description: item.overview || item.eventDescription || item.culturalDescription || `${endpoint.type} 정보가 없습니다.`,
-                  location: item.addr1,
-                  date: endpoint.type === '문화시설' ? '상시 운영' : (item.eventStartDate || item.eventEndDate || '날짜 정보 없음'),
-                  startDate: item.eventStartDate,
-                  endDate: item.eventEndDate,
+                  id: `${endpoint.type}_${item.contentid || item.contentId || Date.now()}`,
+                  title: item.title || '제목 없음',
+                  description: item.overview || item.description || `${endpoint.type} 정보입니다.`,
+                  location: item.addr1 || '위치 정보 없음',
+                  date: item.eventstartdate && item.eventenddate 
+                    ? `${item.eventstartdate} ~ ${item.eventenddate}` 
+                    : '날짜 정보 없음',
+                  startDate: item.eventstartdate,
+                  endDate: item.eventenddate,
                   imageUrl: item.firstimage || item.firstimage2,
                   type: endpoint.type,
                   category: endpoint.category,
                   source: '공공데이터 포털',
-                  contentId: item.contentId,
-                  areaCode: item.areaCode,
+                  contentId: item.contentid || item.contentId,
+                  areaCode: item.areacode || item.areaCode,
                   tel: item.tel,
                   homepage: item.homepage
                 };
@@ -229,11 +231,11 @@ const Events = ({ selectedCity }) => {
                 switch (endpoint.type) {
                   case '축제':
                     eventData.category = '축제';
-                    eventData.highlight = item.eventStartDate && item.eventEndDate ? '진행중' : '준비중';
+                    eventData.highlight = item.eventstartdate && item.eventenddate ? '진행중' : '준비중';
                     break;
                   case '행사':
                     eventData.category = '행사';
-                    eventData.highlight = item.eventStartDate && item.eventEndDate ? '진행중' : '준비중';
+                    eventData.highlight = item.eventstartdate && item.eventenddate ? '진행중' : '준비중';
                     break;
                   case '문화시설':
                     eventData.category = '문화시설';
@@ -242,6 +244,7 @@ const Events = ({ selectedCity }) => {
                 }
 
                 allEvents.push(eventData);
+                console.log('✅ 이벤트 데이터 추가:', eventData.title); // 디버깅용
               }
             });
             successCount++;
@@ -251,6 +254,12 @@ const Events = ({ selectedCity }) => {
           }
         } catch (error) {
           console.error(`❌ ${endpoint.type} API 호출 실패:`, error);
+          console.error(`❌ ${endpoint.type} API URL:`, endpoint.url);
+          console.error(`❌ ${endpoint.type} 에러 상세:`, {
+            name: error.name,
+            message: error.message,
+            stack: error.stack
+          });
           errorCount++;
         }
       }
@@ -332,22 +341,23 @@ const Events = ({ selectedCity }) => {
       const regionName = getRegionFromCity(selectedCity);
 
       
-      if (PUBLIC_DATA_API_KEY) {
-        const loadEvents = async () => {
-          const result = await fetchEvents(regionName);
-          if (result) {
-            setEvents(result);
-            setApiStatus('success');
-          } else {
-            setEvents(getFallbackEvents(regionName));
-            setApiStatus('fallback');
-          }
-        };
-        loadEvents();
-      } else {
-        setEvents(getFallbackEvents(regionName));
-        setApiStatus('fallback');
-      }
+              if (PUBLIC_DATA_API_KEY) {
+          const loadEvents = async () => {
+            const result = await fetchEvents(regionName);
+            
+            if (result && result.length > 0) {
+              setEvents(result);
+              setApiStatus('success');
+            } else {
+              setEvents(getFallbackEvents(regionName));
+              setApiStatus('fallback');
+            }
+          };
+          loadEvents();
+        } else {
+          setEvents(getFallbackEvents(regionName));
+          setApiStatus('fallback');
+        }
     }
   }, [selectedCity]);
 

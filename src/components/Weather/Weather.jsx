@@ -13,25 +13,21 @@ const Weather = ({ city, coordinates, isLocationSelected }) => {
 
     useEffect(() => {
     if (coordinates && coordinates.lat && coordinates.lon) {
-      console.log('🌤️ Weather: useEffect 실행됨', { coordinates, city });
       fetchWeatherData();
     }
   }, [coordinates?.lat, coordinates?.lon]); // 좌표만 변경될 때만 실행
 
   const fetchWeatherData = async () => {
     try {
-      console.log('🌤️ Weather: 날씨 데이터 요청 시작', { coordinates, city });
       setLoading(true);
       setError(null);
       
       // API 키 상태 확인
       const apiStatus = checkApiKeys();
-      console.log('🔑 Weather: API 키 상태:', apiStatus);
       
       // API 사용 설정 확인
       if (!API_SETTINGS.USE_OPENWEATHER_API) {
         const errorMsg = 'OpenWeather API 키가 설정되지 않아 날씨 정보를 가져올 수 없습니다.';
-        console.error('❌ Weather:', errorMsg);
         setError(errorMsg);
         setApiStatus('disabled');
         setLoading(false);
@@ -40,55 +36,43 @@ const Weather = ({ city, coordinates, isLocationSelected }) => {
 
       // 현재 날씨 데이터 가져오기
       const currentUrl = `${API_ENDPOINTS.OPENWEATHER_BASE}/weather?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${API_KEYS.OPENWEATHER}&units=metric&lang=kr`;
-      console.log('🌐 Weather: 현재 날씨 API 요청 URL:', currentUrl);
       
       const currentResponse = await fetch(currentUrl);
-      console.log('📡 Weather: 현재 날씨 API 응답 상태:', currentResponse.status);
       
       if (!currentResponse.ok) {
         const errorText = await currentResponse.text();
-        console.error('❌ Weather: 현재 날씨 API 오류 응답:', errorText);
         throw new Error(`날씨 데이터를 가져올 수 없습니다. (${currentResponse.status})`);
       }
       
       const currentData = await currentResponse.json();
-      console.log('✅ Weather: 현재 날씨 데이터 수신:', currentData);
       
       // OpenWeatherMap API 응답에서 지역명 추출
       const extractedCityName = currentData.name || city || '알 수 없는 위치';
-      console.log('🏙️ Weather: 추출된 도시명:', extractedCityName);
       
       // 영문 도시명을 한국어로 변환
       const koreanCityName = getKoreanCityName(extractedCityName);
-      console.log('🇰🇷 Weather: 한국어 도시명:', koreanCityName);
       setCityName(koreanCityName);
       setCurrentWeather(currentData);
 
       // 5일 예보 데이터 가져오기
       const forecastUrl = `${API_ENDPOINTS.OPENWEATHER_BASE}/forecast?lat=${coordinates.lat}&lon=${coordinates.lon}&appid=${API_KEYS.OPENWEATHER}&units=metric&lang=kr`;
-      console.log('🌐 Weather: 5일 예보 API 요청 URL:', forecastUrl);
       
       const forecastResponse = await fetch(forecastUrl);
-      console.log('📡 Weather: 5일 예보 API 응답 상태:', forecastResponse.status);
       
       if (!forecastResponse.ok) {
         const errorText = await forecastResponse.text();
-        console.error('❌ Weather: 5일 예보 API 오류 응답:', errorText);
         throw new Error(`예보 데이터를 가져올 수 없습니다. (${forecastResponse.status})`);
       }
       
       const forecastData = await forecastResponse.json();
-      console.log('✅ Weather: 5일 예보 데이터 수신:', forecastData);
       setForecast(forecastData);
       
       // 마지막 업데이트 시간 설정
       setLastUpdated(new Date());
       
       setApiStatus('success');
-      console.log('🎉 Weather: 모든 날씨 데이터 로드 완료!');
       
     } catch (err) {
-      console.error('❌ Weather: 날씨 데이터 가져오기 오류:', err);
       setError(err.message);
       setApiStatus('error');
       // 에러 시 상태 초기화
@@ -483,12 +467,7 @@ const Weather = ({ city, coordinates, isLocationSelected }) => {
     // 매핑된 한국어 도시명이 있으면 반환, 없으면 원본 반환
     const result = cityNameMap[englishName] || englishName;
     
-    // 디버깅을 위한 로그
-    if (result === englishName) {
-      console.log('⚠️ 도시명 변환 실패:', englishName);
-    } else {
-      console.log('✅ 도시명 변환 성공:', englishName, '→', result);
-    }
+
     
     return result;
   };
@@ -533,7 +512,6 @@ const Weather = ({ city, coordinates, isLocationSelected }) => {
       .sort((a, b) => new Date(a.date) - new Date(b.date))
       .slice(0, 5);
     
-    console.log('📅 5일 예보 데이터 처리 완료:', sortedForecast);
     return sortedForecast;
   };
 
